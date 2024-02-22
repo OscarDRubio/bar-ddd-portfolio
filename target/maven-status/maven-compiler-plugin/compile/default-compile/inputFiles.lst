@@ -1,0 +1,8 @@
+C:\Develop\Projects\spaceship-crud\src\main\java\com\spacecraft\exception\GlobalExceptionHandler.java
+C:\Develop\Projects\spaceship-crud\src\main\java\com\spacecraft\aspect\NegativeIdAspect.java
+C:\Develop\Projects\spaceship-crud\src\main\java\com\spacecraft\exception\DuplicateSpacecraftException.java
+C:\Develop\Projects\spaceship-crud\src\main\java\com\spacecraft\model\Spacecraft.java
+C:\Develop\Projects\spaceship-crud\src\main\java\com\spacecraft\controller\SpacecraftController.java
+C:\Develop\Projects\spaceship-crud\src\main\java\com\spacecraft\repository\SpacecraftRepository.java
+C:\Develop\Projects\spaceship-crud\src\main\java\com\spacecraft\exception\NullNameException.java
+C:\Develop\Projects\spaceship-crud\src\main\java\com\spacecraft\SpacecraftApplication.java
