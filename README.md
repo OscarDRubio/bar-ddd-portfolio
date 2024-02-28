@@ -13,6 +13,10 @@ The Spacecraft Repository is a simple project designed to store information abou
 
 1. Clone this repository: `git clone [repository-url](https://github.com/OscarDRubio/spaceship-crud.git)`
 
+## Documentation
+
+Swagger url: http://localhost:8080/swagger-ui/index.html#/
+
 ## Contribution
 
 If you want to contribute to the project, follow these steps:
