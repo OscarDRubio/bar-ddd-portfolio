@@ -2,8 +2,6 @@ package com.spacecraft.model;
 
 import jakarta.persistence.*;
 
-import java.util.Date;
-
 @Entity
 @Table(name="spacecraft", indexes = {@Index(name = "idx_name", columnList = "name")})
 public class Spacecraft {

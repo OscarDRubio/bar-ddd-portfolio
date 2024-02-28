@@ -19,7 +19,7 @@ public class NegativeIdAspect {
     @Before("getSpacecraftWithNegativeId(id)")
     public void logNegativeId(Long id) {
         if (id < 0) {
-            logger.info("Requesting spacecraft with negative ID: " + id);
+            logger.info("Requesting spacecraft with negative ID: {}}", id);
         }
     }
 }

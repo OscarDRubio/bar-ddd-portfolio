@@ -23,7 +23,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class SpacecraftControllerTest extends TestCase {
+class SpacecraftControllerTest extends TestCase {
 
     @Autowired
     private MockMvc mockMvc;
@@ -38,7 +38,7 @@ public class SpacecraftControllerTest extends TestCase {
 
     @Test
     @Order(1)
-    public void testCreateSpacecraft() throws Exception {
+    void testCreateSpacecraft() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.post(basePath)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -49,7 +49,7 @@ public class SpacecraftControllerTest extends TestCase {
 
     @Test
     @Order(2)
-    public void testCreateSpacecraft_duplicate() throws Exception {
+    void testCreateSpacecraft_duplicate() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.post(basePath)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -59,7 +59,7 @@ public class SpacecraftControllerTest extends TestCase {
 
     @Test
     @Order(3)
-    public void testCreateSpacecraft_emptyornullname() throws Exception {
+    void testCreateSpacecraft_emptyornullname() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.post(basePath)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -74,7 +74,7 @@ public class SpacecraftControllerTest extends TestCase {
 
     @Test
     @Order(4)
-    public void testGetSpacecraft() throws Exception {
+    void testGetSpacecraft() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.get(basePath + "/1")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -85,7 +85,7 @@ public class SpacecraftControllerTest extends TestCase {
 
     @Test
     @Order(5)
-    public void testGetSpacecraft_nonexistent_id() throws Exception {
+    void testGetSpacecraft_nonexistent_id() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.get(basePath + "/-2")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -94,7 +94,7 @@ public class SpacecraftControllerTest extends TestCase {
 
     @Test
     @Order(6)
-    public void testModifySpacecraft() throws Exception {
+    void testModifySpacecraft() throws Exception {
 
         String updatedSpacecraftJson = "{\"name\": \"Apollo 13\"}";
         mockMvc.perform(MockMvcRequestBuilders.put(basePath + "/{id}", 1)
@@ -109,7 +109,7 @@ public class SpacecraftControllerTest extends TestCase {
 
     @Test
     @Order(7)
-    public void testModifySpacecraft_nonexistent_id() throws Exception {
+    void testModifySpacecraft_nonexistent_id() throws Exception {
 
         String updatedSpacecraftJson = "{\"name\": \"Apollo 13\"}";
         mockMvc.perform(MockMvcRequestBuilders.put(basePath + "/{id}", 2)
@@ -120,7 +120,7 @@ public class SpacecraftControllerTest extends TestCase {
 
     @Test
     @Order(8)
-    public void testModifySpacecraft_emptyornullname() throws Exception {
+    void testModifySpacecraft_emptyornullname() throws Exception {
 
         String updatedSpacecraftJson = "{\"name\": \"\"}";
         mockMvc.perform(MockMvcRequestBuilders.put(basePath + "/{id}", 2)
@@ -137,7 +137,7 @@ public class SpacecraftControllerTest extends TestCase {
 
     @Test
     @Order(9)
-    public void testGetSpacecrafts() throws Exception {
+    void testGetSpacecrafts() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.get(basePath + "?page=0&size=5")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -147,7 +147,7 @@ public class SpacecraftControllerTest extends TestCase {
 
     @Test
     @Order(10)
-    public void testDeleteSpacecraft() throws Exception {
+    void testDeleteSpacecraft() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.delete(basePath + "/1")
                         .contentType(MediaType.APPLICATION_JSON))

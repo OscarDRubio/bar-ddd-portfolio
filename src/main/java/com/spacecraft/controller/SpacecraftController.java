@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -18,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.MessageFormat;
 import java.util.Optional;
 
 @Tag(name = "Spacecraft", description = "Spacecraf management API")
@@ -35,9 +35,13 @@ public class SpacecraftController {
             summary = "Retrieve a list of spacecrafts with pagination",
             description = "Get a list of spaceship objects paginated. The response is a Spacecraft list object.",
             tags = {"get", "list", "pageable" })
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = Page.class), mediaType = "application/json") }),
-            @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema()) }) })
+    @ApiResponse(responseCode = "500", content = {
+            @Content(schema = @Schema())
+    })
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = Page.class),
+                    mediaType = "application/json")
+    })
     @GetMapping
     public ResponseEntity<Page<Spacecraft>> getAllSpacecrafts(Pageable pageable) {
         Page<Spacecraft> spacecraftsPage = spacecraftRepository.findAll(pageable);
@@ -48,9 +52,13 @@ public class SpacecraftController {
             summary = "Retrieve a list of spacecrafts with pagination that contains a certain String in their name",
             description = "Get a list of spaceship objects paginated. The response is a Spacecraft list object.",
             tags = {"get", "list", "pageable" })
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = Page.class), mediaType = "application/json") }),
-            @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema()) }) })
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = Page.class),
+                    mediaType = "application/json")
+    })
+    @ApiResponse(responseCode = "500", content = {
+            @Content(schema = @Schema())
+    })
     @Cacheable("spacecraftListByNameCache")
     @GetMapping("/search")
     public ResponseEntity<Page<Spacecraft>> searchSpacecraftByName(@RequestParam String keyword, Pageable pageable) {
@@ -68,10 +76,12 @@ public class SpacecraftController {
     @PostMapping
     public ResponseEntity<Spacecraft> createSpacecraft(@RequestBody Spacecraft spacecraft) throws DuplicateSpacecraftException, NullNameException {
         if(spacecraft.getName() == null || spacecraft.getName().isEmpty()) {
-            throw new NullNameException("The spacecraft " + spacecraft.getName() + " cannot be null.");
+            throw new NullNameException(
+                    MessageFormat.format("The spacecraft {0} cannot be null.", spacecraft.getName()));
         }
         if(spacecraftRepository.existsByName(spacecraft.getName())) {
-            throw new DuplicateSpacecraftException("The spacecraft " + spacecraft.getName() + " already exists.");
+            throw new DuplicateSpacecraftException(
+                    MessageFormat.format("The spacecraft {0} already exists.", spacecraft.getName()));
         }
         Spacecraft savedSpacecraft = spacecraftRepository.save(spacecraft);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedSpacecraft);
@@ -80,7 +90,8 @@ public class SpacecraftController {
     @PutMapping("/{id}")
     public ResponseEntity<Spacecraft> updateSpacecraft(@PathVariable Long id, @RequestBody Spacecraft spacecraftDetails) throws NullNameException {
         if(spacecraftDetails.getName() == null || spacecraftDetails.getName().isEmpty()) {
-            throw new NullNameException("The spacecraft " + spacecraftDetails.getName() + " cannot be null.");
+            throw new NullNameException(
+                    MessageFormat.format("The spacecraft {0} cannot be null.", spacecraftDetails.getName()));
         }
         Optional<Spacecraft> spacecraftOptional = spacecraftRepository.findById(id);
         if (spacecraftOptional.isEmpty()) {
@@ -93,7 +104,7 @@ public class SpacecraftController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteSpacecraft(@PathVariable Long id) {
+    public ResponseEntity<Object> deleteSpacecraft(@PathVariable Long id) {
         spacecraftRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
