@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.spacecraft.SpacecraftControllerTest
 -------------------------------------------------------------------------------
-Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 19.87 s -- in com.spacecraft.SpacecraftControllerTest
+Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 34.43 s -- in com.spacecraft.SpacecraftControllerTest
