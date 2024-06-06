@@ -1,5 +1,6 @@
 package com.spacecraft.controller;
 
+import com.spacecraft.dto.SpacecraftDTO;
 import com.spacecraft.exception.DuplicateSpacecraftException;
 import com.spacecraft.exception.NullNameException;
 import com.spacecraft.model.Spacecraft;
@@ -74,33 +75,45 @@ public class SpacecraftController {
     }
 
     @PostMapping
-    public ResponseEntity<Spacecraft> createSpacecraft(@RequestBody Spacecraft spacecraft) throws DuplicateSpacecraftException, NullNameException {
-        if(spacecraft.getName() == null || spacecraft.getName().isEmpty()) {
+    public ResponseEntity<Spacecraft> createSpacecraft(@RequestBody SpacecraftDTO spacecraftDTO)
+            throws DuplicateSpacecraftException, NullNameException {
+
+        if(spacecraftDTO.getName() == null || spacecraftDTO.getName().isEmpty()) {
             throw new NullNameException(
-                    MessageFormat.format("The spacecraft {0} cannot be null.", spacecraft.getName()));
+                    MessageFormat.format("The spacecraft {0} cannot be null.", spacecraftDTO.getName()));
         }
-        if(spacecraftRepository.existsByName(spacecraft.getName())) {
+
+        if(spacecraftRepository.existsByName(spacecraftDTO.getName())) {
             throw new DuplicateSpacecraftException(
-                    MessageFormat.format("The spacecraft {0} already exists.", spacecraft.getName()));
+                    MessageFormat.format("The spacecraft {0} already exists.", spacecraftDTO.getName()));
         }
-        Spacecraft savedSpacecraft = spacecraftRepository.save(spacecraft);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedSpacecraft);
+
+        Spacecraft spacecraft = new Spacecraft(
+                spacecraftDTO.getName(),
+                spacecraftDTO.getCrew());
+        spacecraftRepository.save(spacecraft);
+        return ResponseEntity.status(HttpStatus.CREATED).body(spacecraft);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Spacecraft> updateSpacecraft(@PathVariable Long id, @RequestBody Spacecraft spacecraftDetails) throws NullNameException {
-        if(spacecraftDetails.getName() == null || spacecraftDetails.getName().isEmpty()) {
+    public ResponseEntity<Spacecraft> updateSpacecraft(@PathVariable Long id, @RequestBody SpacecraftDTO spacecraftDTO)
+            throws NullNameException {
+
+        if(spacecraftDTO.getName() == null || spacecraftDTO.getName().isEmpty()) {
             throw new NullNameException(
-                    MessageFormat.format("The spacecraft {0} cannot be null.", spacecraftDetails.getName()));
+                    MessageFormat.format("The spacecraft {0} cannot be null.", spacecraftDTO.getName()));
         }
+
         Optional<Spacecraft> spacecraftOptional = spacecraftRepository.findById(id);
         if (spacecraftOptional.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+
         Spacecraft spacecraft = spacecraftOptional.get();
-        spacecraft.setName(spacecraftDetails.getName());
-        Spacecraft updatedSpacecraft = spacecraftRepository.save(spacecraft);
-        return ResponseEntity.ok().body(updatedSpacecraft);
+        spacecraft.setName(spacecraftDTO.getName());
+        spacecraft.setCrew(spacecraftDTO.getCrew());
+        spacecraftRepository.save(spacecraft);
+        return ResponseEntity.ok().body(spacecraft);
     }
 
     @DeleteMapping("/{id}")

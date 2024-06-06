@@ -1,9 +1,0 @@
-com\spacecraft\aspect\NegativeIdAspect.class
-com\spacecraft\repository\SpacecraftRepository.class
-com\spacecraft\config\SwaggerConfig.class
-com\spacecraft\exception\DuplicateSpacecraftException.class
-com\spacecraft\model\Spacecraft.class
-com\spacecraft\controller\SpacecraftController.class
-com\spacecraft\exception\NullNameException.class
-com\spacecraft\SpacecraftApplication.class
-com\spacecraft\exception\GlobalExceptionHandler.class

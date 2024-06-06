@@ -11,12 +11,19 @@ public class Spacecraft {
     private Long id;
     @Column(unique = true, nullable = false)
     private String name;
+    @Column(unique = true, nullable = false, columnDefinition = "int default 0")
+    private Integer crew;
 
     public Spacecraft() {
     }
 
     public Spacecraft(String name) {
         this.name = name;
+    }
+
+    public Spacecraft(String name, Integer crew) {
+        this.name = name;
+        this.crew = crew;
     }
 
     public Long getId() {
@@ -35,4 +42,11 @@ public class Spacecraft {
         this.name = name;
     }
 
+    public Integer getCrew() {
+        return crew;
+    }
+
+    public void setCrew(Integer crew) {
+        this.crew = crew;
+    }
 }
