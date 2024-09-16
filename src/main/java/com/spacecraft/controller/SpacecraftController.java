@@ -1,9 +1,9 @@
 package com.spacecraft.controller;
 
+import com.spacecraft.domain.Spacecraft;
 import com.spacecraft.dto.SpacecraftDTO;
 import com.spacecraft.exception.DuplicateSpacecraftException;
 import com.spacecraft.exception.NullNameException;
-import com.spacecraft.model.Spacecraft;
 import com.spacecraft.repository.SpacecraftRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

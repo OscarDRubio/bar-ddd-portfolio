@@ -1,8 +1,10 @@
 package com.spacecraft.repository;
 
-import com.spacecraft.model.Spacecraft;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import com.spacecraft.domain.Spacecraft;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
