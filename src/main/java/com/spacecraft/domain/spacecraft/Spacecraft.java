@@ -1,4 +1,4 @@
-package com.spacecraft.domain;
+package com.spacecraft.domain.spacecraft;
 
 import jakarta.persistence.*;
 

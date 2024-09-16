@@ -1,6 +1,6 @@
 package com.spacecraft.controller;
 
-import com.spacecraft.domain.Spacecraft;
+import com.spacecraft.domain.spacecraft.Spacecraft;
 import com.spacecraft.dto.SpacecraftDTO;
 import com.spacecraft.exception.DuplicateSpacecraftException;
 import com.spacecraft.exception.NullNameException;
