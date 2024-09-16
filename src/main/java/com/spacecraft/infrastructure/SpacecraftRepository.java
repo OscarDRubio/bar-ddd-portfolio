@@ -1,4 +1,4 @@
-package com.spacecraft.repository;
+package com.spacecraft.infrastructure;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

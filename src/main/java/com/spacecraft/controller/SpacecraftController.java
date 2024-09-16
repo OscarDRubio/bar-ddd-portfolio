@@ -4,7 +4,8 @@ import com.spacecraft.domain.spacecraft.Spacecraft;
 import com.spacecraft.dto.SpacecraftDTO;
 import com.spacecraft.exception.DuplicateSpacecraftException;
 import com.spacecraft.exception.NullNameException;
-import com.spacecraft.repository.SpacecraftRepository;
+import com.spacecraft.infrastructure.SpacecraftRepository;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

@@ -1,7 +1,8 @@
 package com.spacecraft;
 
 import com.spacecraft.controller.SpacecraftController;
-import com.spacecraft.repository.SpacecraftRepository;
+import com.spacecraft.infrastructure.SpacecraftRepository;
+
 import junit.framework.TestCase;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
