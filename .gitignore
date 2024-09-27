@@ -2,5 +2,8 @@
 .idea/
 *.iml
 
+# VsCode files
+.vscode/
+
 # Maven specific files
 target/

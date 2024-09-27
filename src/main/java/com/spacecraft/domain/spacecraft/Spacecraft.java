@@ -1,18 +1,15 @@
 package com.spacecraft.domain.spacecraft;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(name="spacecraft", indexes = {@Index(name = "idx_name", columnList = "name")})
+@Document(collection = "spacecraft")
 public class Spacecraft {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(unique = true, nullable = false)
+    private SpacecraftId id;  // MongoDB usa un identificador de tipo String
     private String name;
-    @Column(unique = true, nullable = false, columnDefinition = "int default 0")
-    private Integer crew;
+    private Integer crew = 0;  // Valor por defecto para crew
 
     public Spacecraft() {
     }
@@ -26,11 +23,11 @@ public class Spacecraft {
         this.crew = crew;
     }
 
-    public Long getId() {
+    public SpacecraftId getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(SpacecraftId id) {
         this.id = id;
     }
 

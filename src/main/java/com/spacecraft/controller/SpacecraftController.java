@@ -1,6 +1,7 @@
 package com.spacecraft.controller;
 
 import com.spacecraft.domain.spacecraft.Spacecraft;
+import com.spacecraft.domain.spacecraft.SpacecraftId;
 import com.spacecraft.dto.SpacecraftDTO;
 import com.spacecraft.exception.DuplicateSpacecraftException;
 import com.spacecraft.exception.NullNameException;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.text.MessageFormat;
 import java.util.Optional;
 
-@Tag(name = "Spacecraft", description = "Spacecraf management API")
+@Tag(name = "Spacecraft", description = "Spacecraft management API")
 @RestController
 @RequestMapping("/api/spacecraft")
 public class SpacecraftController {
@@ -69,7 +70,7 @@ public class SpacecraftController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Spacecraft> getSpacecraftById(@PathVariable Long id) {
+    public ResponseEntity<Spacecraft> getSpacecraftById(@PathVariable SpacecraftId id) {
         Optional<Spacecraft> spacecraftOptional = spacecraftRepository.findById(id);
         return spacecraftOptional.map(spacecraft -> ResponseEntity.ok().body(spacecraft))
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -97,7 +98,7 @@ public class SpacecraftController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Spacecraft> updateSpacecraft(@PathVariable Long id, @RequestBody SpacecraftDTO spacecraftDTO)
+    public ResponseEntity<Spacecraft> updateSpacecraft(@PathVariable SpacecraftId id, @RequestBody SpacecraftDTO spacecraftDTO)
             throws NullNameException {
 
         if(spacecraftDTO.getName() == null || spacecraftDTO.getName().isEmpty()) {
@@ -118,7 +119,7 @@ public class SpacecraftController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteSpacecraft(@PathVariable Long id) {
+    public ResponseEntity<Object> deleteSpacecraft(@PathVariable SpacecraftId id) {
         spacecraftRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
