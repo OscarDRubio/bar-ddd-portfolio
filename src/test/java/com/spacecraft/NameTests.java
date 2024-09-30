@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import com.spacecraft.domain.spacecraft.Name;
 
-public class ValueObjectTests  {
+public class NameTests  {
 
     @Test()
     @DisplayName("""
