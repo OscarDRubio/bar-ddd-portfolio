@@ -1,11 +1,12 @@
 package com.spacecraft;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.spacecraft.domain.exceptions.EmptyNameException;
+import com.spacecraft.domain.exceptions.NullNameException;
 import com.spacecraft.domain.spacecraft.Name;
 
 public class NameTests  {
@@ -13,14 +14,12 @@ public class NameTests  {
     @Test()
     @DisplayName("""
         When I try to make a NULL name
-        Then it throws an error with the correct message
+        Then it throws a NullNameException
     """)
     void name_null_exception() throws Exception {
-        Exception exception = assertThrows(RuntimeException.class, () -> {
+        assertThrows(NullNameException.class, () -> {
             new Name(null);
         });
-
-        assertEquals(exception.getMessage(), "Name cannot be null.");
     }
 
     @Test()
@@ -29,10 +28,8 @@ public class NameTests  {
         Then it throws an error with the correct message
     """)
     void name_empty_exception() throws Exception {
-        Exception exception = assertThrows(RuntimeException.class, () -> {
+        assertThrows(EmptyNameException.class, () -> {
             new Name("");
         });
-
-        assertEquals(exception.getMessage(), "Name cannot be empty.");
     } 
 }
