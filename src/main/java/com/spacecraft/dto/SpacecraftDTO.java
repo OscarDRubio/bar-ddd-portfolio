@@ -1,7 +1,5 @@
 package com.spacecraft.dto;
 
-import jakarta.persistence.Column;
-
 public class SpacecraftDTO {
 
     private String name;
