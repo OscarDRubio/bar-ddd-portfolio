@@ -11,6 +11,7 @@ import com.spacecraft.domain.spacecraft.Name;
 
 public class NameTests  {
 
+    //TODO: Add more logic to Name and test it
     @Test()
     @DisplayName("""
         When I try to make a NULL name

@@ -1,9 +1,18 @@
 package com.spacecraft;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spacecraft.controller.SpacecraftController;
+import com.spacecraft.domain.exceptions.EmptyNameException;
+import com.spacecraft.domain.exceptions.NullNameException;
+import com.spacecraft.domain.spacecraft.Name;
+import com.spacecraft.domain.spacecraft.Spacecraft;
 import com.spacecraft.infrastructure.SpacecraftRepository;
 
+import jakarta.servlet.ServletException;
 import junit.framework.TestCase;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -15,8 +24,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -38,7 +49,6 @@ class SpacecraftControllerTest extends TestCase {
     private final String basePath = "/api/spacecraft";
 
     @Test
-    @Order(1)
     void testCreateSpacecraft() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.post(basePath)
@@ -49,35 +59,49 @@ class SpacecraftControllerTest extends TestCase {
     }
 
     @Test
-    @Order(2)
     void testCreateSpacecraft_duplicate() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.post(basePath)
+        testCreateSpacecraft();
+
+        Exception exception = assertThrows(ServletException.class, () -> {
+                mockMvc.perform(MockMvcRequestBuilders.post(basePath)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"New Spacecraft\"}"))
-                .andExpect(MockMvcResultMatchers.status().isConflict());
+                        .content("{\"name\":\"New Spacecraft\"}"));
+        });
+
+        assertTrue(exception.getCause() instanceof DataIntegrityViolationException);
     }
 
     @Test
-    @Order(3)
-    void testCreateSpacecraft_emptyornullname() throws Exception {
+    void emptyName() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.post(basePath)
+        Exception exception = assertThrows(ServletException.class, () -> {
+                mockMvc.perform(MockMvcRequestBuilders.post(basePath)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"\"}"))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                        .content("{\"name\":\"\"}"));
+        });
 
-        mockMvc.perform(MockMvcRequestBuilders.post(basePath)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":null}"))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        assertTrue(exception.getCause() instanceof EmptyNameException);
     }
 
     @Test
-    @Order(4)
+    void nullName() throws Exception {
+
+        Exception exception = assertThrows(ServletException.class, () -> {
+                mockMvc.perform(MockMvcRequestBuilders.post(basePath)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":null}"));
+        });
+
+        assertTrue(exception.getCause() instanceof NullNameException);
+    }
+
+    @Test
     void testGetSpacecraft() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.get(basePath + "/1")
+        Spacecraft spacecraft = createSpacecraft("Apollo 11");
+
+        mockMvc.perform(MockMvcRequestBuilders.get(basePath + "/" + spacecraft.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
@@ -156,5 +180,23 @@ class SpacecraftControllerTest extends TestCase {
 
         mockMvc.perform(MockMvcRequestBuilders.get(basePath + "1"))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    private Spacecraft createSpacecraft(String name) throws Exception {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post(basePath)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":" + name + "}"))
+                .andExpect(MockMvcResultMatchers.status().isCreated())  // Asegura que el estado sea 201
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(name))  // Asegura que el nombre sea correcto
+                .andReturn();
+
+        Spacecraft createdSpacecraft = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                 Spacecraft.class);
+
+        return createdSpacecraft;
     }
 }

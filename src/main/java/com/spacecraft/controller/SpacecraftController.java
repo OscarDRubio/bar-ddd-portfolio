@@ -69,7 +69,7 @@ public class SpacecraftController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Spacecraft> getSpacecraftById(@PathVariable Long id) {
+    public ResponseEntity<Spacecraft> getSpacecraftById(@PathVariable String id) {
         Optional<Spacecraft> spacecraftOptional = spacecraftRepository.findById(id);
         return spacecraftOptional.map(spacecraft -> ResponseEntity.ok().body(spacecraft))
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -79,25 +79,14 @@ public class SpacecraftController {
     public ResponseEntity<Spacecraft> createSpacecraft(@RequestBody SpacecraftDTO spacecraftDTO)
             throws DuplicateSpacecraftException, NullNameException {
 
-        if(spacecraftDTO.getName() == null || spacecraftDTO.getName().isEmpty()) {
-            throw new NullNameException(
-                    MessageFormat.format("The spacecraft {0} cannot be null.", spacecraftDTO.getName()));
-        }
-
-        if(spacecraftRepository.existsByName(spacecraftDTO.getName())) {
-            throw new DuplicateSpacecraftException(
-                    MessageFormat.format("The spacecraft {0} already exists.", spacecraftDTO.getName()));
-        }
-
         Spacecraft spacecraft = new Spacecraft(
-                spacecraftDTO.getName(),
-                spacecraftDTO.getCrew());
+                spacecraftDTO.getName());
         spacecraftRepository.save(spacecraft);
         return ResponseEntity.status(HttpStatus.CREATED).body(spacecraft);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Spacecraft> updateSpacecraft(@PathVariable Long id, @RequestBody SpacecraftDTO spacecraftDTO)
+    public ResponseEntity<Spacecraft> updateSpacecraft(@PathVariable String id, @RequestBody SpacecraftDTO spacecraftDTO)
             throws NullNameException {
 
         if(spacecraftDTO.getName() == null || spacecraftDTO.getName().isEmpty()) {
@@ -112,13 +101,12 @@ public class SpacecraftController {
 
         Spacecraft spacecraft = spacecraftOptional.get();
         spacecraft.setName(spacecraftDTO.getName());
-        spacecraft.setCrew(spacecraftDTO.getCrew());
         spacecraftRepository.save(spacecraft);
         return ResponseEntity.ok().body(spacecraft);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteSpacecraft(@PathVariable Long id) {
+    public ResponseEntity<Object> deleteSpacecraft(@PathVariable String id) {
         spacecraftRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }

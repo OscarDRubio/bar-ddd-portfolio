@@ -9,7 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 @Repository
-public interface SpacecraftRepository extends JpaRepository<Spacecraft, Long> {
+public interface SpacecraftRepository extends JpaRepository<Spacecraft, String> {
 
     Page<Spacecraft> findByNameContaining(String keyword, Pageable pageable);
     boolean existsByName(String name);

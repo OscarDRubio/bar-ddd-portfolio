@@ -1,5 +1,7 @@
 package com.spacecraft.domain.spacecraft;
 
+import com.spacecraft.domain.spacecraft.converter.SpacecraftIdConverter;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -7,46 +9,34 @@ import jakarta.persistence.*;
 public class Spacecraft {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    //@Convert(converter = SpacecraftIdConverter.class)
+    private String id;
+    //@Convert(converter = NameConverter.class)  <-- No need to use cause NameConverter have the AutoApply to true
     @Column(unique = true, nullable = false)
-    private String name;
-    @Column(unique = true, nullable = false, columnDefinition = "int default 0")
-    private Integer crew;
+    private Name name;
 
     public Spacecraft() {
+        this.id = new SpacecraftId().toString();
     }
 
     public Spacecraft(String name) {
-        this.name = name;
+        this();
+        this.name = new Name(name);
     }
 
-    public Spacecraft(String name, Integer crew) {
-        this.name = name;
-        this.crew = crew;
+    public String getId() {
+        return id.toString();
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public void setId(String id) {
+        this.id = new SpacecraftId(id).toString();
     }
 
     public String getName() {
-        return name;
+        return name.toString();
     }
 
     public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getCrew() {
-        return crew;
-    }
-
-    public void setCrew(Integer crew) {
-        this.crew = crew;
+        this.name = new Name(name);
     }
 }

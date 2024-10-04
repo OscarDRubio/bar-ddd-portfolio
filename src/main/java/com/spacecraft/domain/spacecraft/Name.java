@@ -5,20 +5,17 @@ import com.spacecraft.domain.exceptions.NullNameException;
 
 public record Name(String value) {
 
-    public Name
-    {
-        if (value == null)
-        {
+    public Name {
+        if (value == null) {
             throw new NullNameException();
         }
-        if (value.length() == 0)
-        {
+        if (value.length() == 0) {
             throw new EmptyNameException();
         }
     }
 
-    public String toString()
-    {
+    @Override
+    public String toString() {
         return value;
     }
 }
