@@ -8,8 +8,8 @@ import com.spacecraft.domain.spacecraft.Spacecraft;
 import com.spacecraft.infrastructure.SpacecraftRepository;
 
 import jakarta.servlet.ServletException;
+import junit.framework.TestCase;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.hamcrest.Matchers;
@@ -35,7 +35,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class SpacecraftControllerTest {
+class SpacecraftControllerTest extends TestCase {
 
     @Autowired
     private MockMvc mockMvc;
