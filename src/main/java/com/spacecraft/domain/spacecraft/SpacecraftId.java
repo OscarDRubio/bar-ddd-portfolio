@@ -2,16 +2,19 @@ package com.spacecraft.domain.spacecraft;
 
 import java.util.UUID;
 
-// TODO: Use uuids, allow empty constructor as well as parsing strings
+import jakarta.persistence.Embeddable;
 
+// TODO: (Ready) Use uuids, allow empty constructor as well as parsing strings
+
+@Embeddable
 public record SpacecraftId(String id) {
 
-        public SpacecraftId() {
-            this(UUID.randomUUID().toString());
-        }    
+    public SpacecraftId() {
+        this(UUID.randomUUID().toString());
+    }    
 
-        @Override
-        public String toString() {
-            return id;
-        }
+    @Override
+    public String toString() {
+        return id;
     }
+}

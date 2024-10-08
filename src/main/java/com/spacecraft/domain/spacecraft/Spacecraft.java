@@ -1,22 +1,21 @@
 package com.spacecraft.domain.spacecraft;
 
-import com.spacecraft.domain.spacecraft.converter.SpacecraftIdConverter;
-
 import jakarta.persistence.*;
 
 @Entity
 @Table(name="spacecraft", indexes = {@Index(name = "idx_name", columnList = "name")})
 public class Spacecraft {
 
-    @Id
-    //@Convert(converter = SpacecraftIdConverter.class)
-    private String id;
-    //@Convert(converter = NameConverter.class)  <-- No need to use cause NameConverter have the AutoApply to true
-    @Column(unique = true, nullable = false)
+    @EmbeddedId
+    private SpacecraftId id;
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name = "name", column = @Column(name = "name", unique = true, nullable = false))
+    })
     private Name name;
 
     public Spacecraft() {
-        this.id = new SpacecraftId().toString();
+        this.id = new SpacecraftId();
     }
 
     public Spacecraft(String name) {
@@ -29,7 +28,7 @@ public class Spacecraft {
     }
 
     public void setId(String id) {
-        this.id = new SpacecraftId(id).toString();
+        this.id = new SpacecraftId(id);
     }
 
     public String getName() {

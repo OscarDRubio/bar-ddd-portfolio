@@ -3,19 +3,22 @@ package com.spacecraft.domain.spacecraft;
 import com.spacecraft.domain.exceptions.EmptyNameException;
 import com.spacecraft.domain.exceptions.NullNameException;
 
-public record Name(String value) {
+import jakarta.persistence.Embeddable;
+
+@Embeddable
+public record Name(String name) {
 
     public Name {
-        if (value == null) {
+        if (name == null) {
             throw new NullNameException();
         }
-        if (value.length() == 0) {
+        if (name.length() == 0) {
             throw new EmptyNameException();
         }
     }
 
     @Override
     public String toString() {
-        return value;
+        return name;
     }
 }

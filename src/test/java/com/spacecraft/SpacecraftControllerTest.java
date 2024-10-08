@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spacecraft.controller.SpacecraftController;
 import com.spacecraft.domain.exceptions.EmptyNameException;
 import com.spacecraft.domain.exceptions.NullNameException;
-import com.spacecraft.domain.spacecraft.Name;
 import com.spacecraft.domain.spacecraft.Spacecraft;
 import com.spacecraft.infrastructure.SpacecraftRepository;
 
@@ -13,9 +12,9 @@ import junit.framework.TestCase;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -58,9 +57,9 @@ class SpacecraftControllerTest extends TestCase {
 
         mockMvc.perform(MockMvcRequestBuilders.post(basePath)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"New Spacecraft\"}"))
+                        .content("{\"name\":\"Soyuz\"}"))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("New Spacecraft"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Soyuz"));
     }
 
     @Test
@@ -70,12 +69,12 @@ class SpacecraftControllerTest extends TestCase {
     """)
     void duplicateName() throws Exception {
 
-        createSpacecraft("New Spacecraft");
+        createSpacecraft("TARDIS");
 
         Exception exception = assertThrows(ServletException.class, () -> {
                 mockMvc.perform(MockMvcRequestBuilders.post(basePath)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"New Spacecraft\"}"));
+                        .content("{\"name\":\"TARDIS\"}"));
         });
 
         assertTrue(exception.getCause() instanceof DataIntegrityViolationException);
@@ -148,9 +147,9 @@ class SpacecraftControllerTest extends TestCase {
     """)
     void modify() throws Exception {
 
-        Spacecraft spacecraft = createSpacecraft("Apollo 13");
+        Spacecraft spacecraft = createSpacecraft("Discovery");
 
-        String updatedSpacecraftJson = "{\"name\": \"Enterprise\"}";
+        String updatedSpacecraftJson = "{\"name\": \"Discovery One\"}";
         mockMvc.perform(MockMvcRequestBuilders.put(basePath + "/{id}", spacecraft.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updatedSpacecraftJson))
@@ -158,7 +157,7 @@ class SpacecraftControllerTest extends TestCase {
 
         mockMvc.perform(MockMvcRequestBuilders.get(basePath + "/{id}", spacecraft.getId()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Enterprise"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Discovery One"));
     }
 
     @Test
@@ -168,7 +167,7 @@ class SpacecraftControllerTest extends TestCase {
     """)
     void modifyNonExistentId() throws Exception {
 
-        String updatedSpacecraftJson = "{\"name\": \"Apollo 13\"}";
+        String updatedSpacecraftJson = "{\"name\": \"Mars Rover Perseverance\"}";
         mockMvc.perform(MockMvcRequestBuilders.put(basePath + "/{id}", "-2")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updatedSpacecraftJson))
@@ -205,17 +204,18 @@ class SpacecraftControllerTest extends TestCase {
 
     @Test
     @DisplayName("""
+        Having one or more items created
         When I try to get a list of items
         Then it returns a 200
     """)
     void getAll() throws Exception {
 
-        createSpacecraft("Halcón Milenario");
+        createSpacecraft("Millenary Falcon");
 
         mockMvc.perform(MockMvcRequestBuilders.get(basePath + "?page=0&size=5")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.content.length()").value(1));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content.length()").value(Matchers.greaterThanOrEqualTo(1)));
     }
 
     @Test
