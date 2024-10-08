@@ -1,10 +1,9 @@
 package com.spacecraft.domain.spacecraft;
 
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import jakarta.persistence.*;
 
-@Document(collection = "spacecraft")
+@Entity
+@Table(name="spacecraft", indexes = {@Index(name = "idx_name", columnList = "name")})
 public class Spacecraft {
 
     @EmbeddedId
