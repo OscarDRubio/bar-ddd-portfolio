@@ -6,44 +6,36 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "spacecraft")
 public class Spacecraft {
 
-    @Id
-    private SpacecraftId id;  // MongoDB usa un identificador de tipo String
-    private String name;
-    private Integer crew = 0;  // Valor por defecto para crew
+    @EmbeddedId
+    private SpacecraftId id;
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name = "name", column = @Column(name = "name", unique = true, nullable = false))
+    })
+    private Name name;
 
     public Spacecraft() {
+        this.id = new SpacecraftId();
     }
 
     public Spacecraft(String name) {
-        this.name = name;
+        this();
+        this.name = new Name(name);
     }
 
-    public Spacecraft(String name, Integer crew) {
-        this.name = name;
-        this.crew = crew;
+    public String getId() {
+        return id.toString();
     }
 
-    public SpacecraftId getId() {
-        return id;
-    }
-
-    public void setId(SpacecraftId id) {
-        this.id = id;
+    public void setId(String id) {
+        this.id = new SpacecraftId(id);
     }
 
     public String getName() {
-        return name;
+        return name.toString();
     }
 
     public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getCrew() {
-        return crew;
-    }
-
-    public void setCrew(Integer crew) {
-        this.crew = crew;
+        this.name = new Name(name);
     }
 }

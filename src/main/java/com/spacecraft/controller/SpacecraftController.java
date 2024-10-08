@@ -80,19 +80,8 @@ public class SpacecraftController {
     public ResponseEntity<Spacecraft> createSpacecraft(@RequestBody SpacecraftDTO spacecraftDTO)
             throws DuplicateSpacecraftException, NullNameException {
 
-        if(spacecraftDTO.getName() == null || spacecraftDTO.getName().isEmpty()) {
-            throw new NullNameException(
-                    MessageFormat.format("The spacecraft {0} cannot be null.", spacecraftDTO.getName()));
-        }
-
-        if(spacecraftRepository.existsByName(spacecraftDTO.getName())) {
-            throw new DuplicateSpacecraftException(
-                    MessageFormat.format("The spacecraft {0} already exists.", spacecraftDTO.getName()));
-        }
-
         Spacecraft spacecraft = new Spacecraft(
-                spacecraftDTO.getName(),
-                spacecraftDTO.getCrew());
+                spacecraftDTO.getName());
         spacecraftRepository.save(spacecraft);
         return ResponseEntity.status(HttpStatus.CREATED).body(spacecraft);
     }
@@ -113,7 +102,6 @@ public class SpacecraftController {
 
         Spacecraft spacecraft = spacecraftOptional.get();
         spacecraft.setName(spacecraftDTO.getName());
-        spacecraft.setCrew(spacecraftDTO.getCrew());
         spacecraftRepository.save(spacecraft);
         return ResponseEntity.ok().body(spacecraft);
     }
