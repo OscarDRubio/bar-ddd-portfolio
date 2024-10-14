@@ -7,7 +7,7 @@ import com.bar.domain.shared.Name;
 import jakarta.persistence.*;
 
 @Entity
-@jakarta.persistence.Table(name = "bar_table", 
+@Table(name = "bar_table", 
        uniqueConstraints = @UniqueConstraint(columnNames = {"barId", "name"}),
        indexes = {@Index(name = "idx_name_bar", columnList = "name, barId")})
 public class BarTable {

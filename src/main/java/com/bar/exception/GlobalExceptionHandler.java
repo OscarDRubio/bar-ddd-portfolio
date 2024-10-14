@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import com.bar.domain.exceptions.DuplicateBarException;
+
 import jakarta.persistence.EntityNotFoundException;
 
 import java.util.LinkedHashMap;
@@ -48,5 +50,23 @@ public class GlobalExceptionHandler {
         body.put("error", exception.getMessage());
 
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+    }
+    @ExceptionHandler(NegativePriceException.class)
+    public ResponseEntity<Object> handleNegativePriceException(NegativePriceException exception) {
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("message", "Price can not be negative");
+        body.put("error", exception.getMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(IllegalDecimalException.class)
+    public ResponseEntity<Object> handleIllegalDecimalException(IllegalDecimalException exception) {
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("message", "Price cannot have more than two decimal places");
+        body.put("error", exception.getMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 }

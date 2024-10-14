@@ -3,10 +3,10 @@ package com.bar.controller;
 import com.bar.controller.dto.CreateBarTableRequest;
 import com.bar.domain.bar.Bar;
 import com.bar.domain.bar.BarId;
+import com.bar.domain.exceptions.DuplicateBarException;
 import com.bar.domain.shared.Name;
 import com.bar.domain.table.BarTable;
 import com.bar.dto.BarDTO;
-import com.bar.exception.DuplicateBarException;
 import com.bar.exception.NullNameException;
 import com.bar.infrastructure.BarRepository;
 import com.bar.infrastructure.BarTableRepository;
@@ -26,7 +26,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.MessageFormat;
 import java.util.Optional;
 
 @Tag(name = "Bar", description = "Bar management API")
@@ -98,11 +97,6 @@ public class BarController {
     @PutMapping("/{id}")
     public ResponseEntity<Bar> updateBar(@PathVariable BarId id, @RequestBody BarDTO barDTO)
             throws NullNameException {
-
-        if(barDTO.getName() == null || barDTO.getName().isEmpty()) {
-            throw new NullNameException(
-                    MessageFormat.format("The bar {0} cannot be null.", barDTO.getName()));
-        }
 
         Optional<Bar> barOptional = barRepository.findById(id);
         if (barOptional.isEmpty()) {
