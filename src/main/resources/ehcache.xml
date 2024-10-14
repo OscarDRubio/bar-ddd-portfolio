@@ -2,7 +2,7 @@
          xsi:noNamespaceSchemaLocation="http://www.ehcache.org/ehcache.xsd"
          updateCheck="false">
 
-    <cache name="spacecraftListByNameCache"
+    <cache name="barListByNameCache"
            maxEntriesLocalHeap="200"
             timeToLiveSeconds="10"
             timeToIdleSeconds="10" />

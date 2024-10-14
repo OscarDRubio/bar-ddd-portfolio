@@ -8,7 +8,7 @@ services:
     depends_on:
       - mongodb
     environment:
-      - MONGO_URI=mongodb://mongodb:27017/spacecraft
+      - MONGO_URI=mongodb://mongodb:27017/bar
 
   mongodb:                        # Definition of MongoDB service
     image: mongo:latest           # MongoDB image to use. The latest version in this case.

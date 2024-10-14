@@ -12,10 +12,10 @@
         },
         {
             "type": "java",
-            "name": "SpacecraftApplication",
+            "name": "BarApplication",
             "request": "launch",
-            "mainClass": "com.spacecraft.SpacecraftApplication",
-            "projectName": "spaceship-crud"
+            "mainClass": "com.bar.BarApplication",
+            "projectName": "bar-crud"
         }
     ]
 }
