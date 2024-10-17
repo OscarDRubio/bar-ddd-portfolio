@@ -1,30 +1,33 @@
 package com.bar.domain.shared;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
-import com.bar.exception.NegativePriceException;
-import com.bar.exception.IllegalDecimalException;
+import com.bar.domain.exception.IllegalDecimalException;
+import com.bar.domain.exception.NegativePriceException;
 
 import jakarta.persistence.Embeddable;
 
 @Embeddable
-public record Price(double value) {
+public record Price(double price) {
 
     public Price {
 
-        if (value < 0) {
+        if (price < 0) {
 
             throw new NegativePriceException("Price can not be negative");
         }
 
-        BigDecimal priceValue = BigDecimal.valueOf(value).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal priceValue = BigDecimal.valueOf(price);
 
         if (priceValue.scale() > 2) {
 
             throw new IllegalDecimalException("Price cannot have more than two decimal places");
         }
 
-        value = priceValue.doubleValue();
+        price = priceValue.doubleValue();
+    }
+    
+    public double asDouble() {
+        return price;
     }
 }

@@ -1,7 +1,7 @@
 package com.bar.domain.shared;
 
-import com.bar.domain.exceptions.EmptyNameException;
-import com.bar.domain.exceptions.NullNameException;
+import com.bar.domain.exception.EmptyNameException;
+import com.bar.domain.exception.NullNameException;
 
 import jakarta.persistence.Embeddable;
 

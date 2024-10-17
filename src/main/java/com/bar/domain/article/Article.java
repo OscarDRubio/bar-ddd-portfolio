@@ -1,11 +1,11 @@
 package com.bar.domain.article;
 
 import com.bar.domain.bar.BarId;
-import com.bar.domain.exceptions.NullBarIdException;
+import com.bar.domain.exception.NullBarIdException;
+import com.bar.domain.exception.NullNameException;
+import com.bar.domain.exception.NullPriceException;
 import com.bar.domain.shared.Name;
 import com.bar.domain.shared.Price;
-import com.bar.exception.NullNameException;
-import com.bar.exception.NullPriceException;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
@@ -20,11 +20,11 @@ import jakarta.persistence.UniqueConstraint;
 @Entity
 @Table(name = "article", 
        uniqueConstraints = @UniqueConstraint(columnNames = {"barId", "name"}),
-       indexes = {@Index(name = "idx_name_bar", columnList = "name, barId")})
+       indexes = {@Index(name = "idx_article_name_bar", columnList = "name, barId")})
 public class Article {
 
     @EmbeddedId
-    private ArticleId articleId;
+    private ArticleId id;
     @Embedded
     @AttributeOverrides({
         @AttributeOverride(name = "name", column = @Column(name = "name", nullable = false))
@@ -40,12 +40,14 @@ public class Article {
         @AttributeOverride(name = "price", column = @Column(name = "price", nullable = false))
     })
     private Price price;
+    @Column(name = "active", nullable = false)
+    private boolean active;
 
     public Article() {
-        this.articleId = new ArticleId();
+        this.id = new ArticleId();
     }
 
-    public Article(Name name, BarId barId, Price price) throws NullNameException {
+    public Article(Name name, BarId barId, Price price, boolean active) throws NullNameException {
 
         this();
         if(name == null) throw new NullNameException();
@@ -54,14 +56,19 @@ public class Article {
         this.barId = barId;
         if(price == null) throw new NullPriceException();
         this.price = price;
+        this.active = active;
     }
 
-    public ArticleId getArticleId() {
-        return articleId;
+    public ArticleId getId() {
+        return id;
     }
 
     public Name getName() {
         return name;
+    }
+
+    public void setName(Name name) {
+        this.name = name;
     }
 
     public BarId getBarId() {
@@ -70,5 +77,17 @@ public class Article {
 
     public Price getPrice() {
         return price;
+    }
+
+    public void setPrice(Price price) {
+        this.price = price;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

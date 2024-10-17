@@ -1,8 +1,8 @@
 package com.bar.domain.table;
 
 import com.bar.domain.bar.BarId;
-import com.bar.domain.exceptions.NullBarIdException;
-import com.bar.domain.exceptions.NullNameException;
+import com.bar.domain.exception.NullBarIdException;
+import com.bar.domain.exception.NullNameException;
 import com.bar.domain.shared.Name;
 import jakarta.persistence.*;
 
