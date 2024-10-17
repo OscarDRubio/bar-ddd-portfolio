@@ -14,7 +14,7 @@ public class NegativeIdAspect {
 
     private static final Logger logger = LogManager.getLogger(NegativeIdAspect.class);
 
-    @Pointcut("execution(* com.bar.controller.BarController.getBarById(..)) && args(id)")
+    @Pointcut("execution(* com.bar.infrastructure.web.controller.BarController.getBarById(..)) && args(id)")
     private void getBarWithNegativeId(Long id) {}
 
     @Before("getBarWithNegativeId(id)")

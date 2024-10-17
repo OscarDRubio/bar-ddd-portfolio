@@ -18,6 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import com.bar.application.ArticleService;
 import com.bar.domain.bar.Bar;
 import com.bar.domain.bar.BarId;
+import com.bar.domain.exception.DuplicateBarException;
 import com.bar.domain.exception.EmptyNameException;
 import com.bar.domain.exception.NullBarIdException;
 import com.bar.domain.exception.NullNameException;
@@ -27,8 +28,27 @@ import com.bar.infrastructure.repository.ArticleHistoryRepository;
 import com.bar.infrastructure.repository.ArticleRepository;
 import com.bar.infrastructure.repository.BarRepository;
 
+import jakarta.transaction.Transactional;
+
+/**
+ * This class contains unit tests for the Article entity, which represents 
+ * items offered in a bar. The tests cover various scenarios for creating, 
+ * updating, and managing Article instances, including exception handling 
+ * for invalid data.
+ *
+ * <p>Annotations applied to the class:</p>
+ * <ul>
+ * <li>{@code @SpringBootTest}: Loads the full Spring application context for testing the application's configuration and components.</li>
+ * <li>{@code @ActiveProfiles("test")}: Specifies the active profile for the test context, using the "test" profile to load test-specific configurations.</li>
+ * <li>{@code @Transactional}: Ensures that each test method is executed in a transaction, which is rolled back after the test completes, allowing database state to be reset for each test.</li>
+ * </ul>
+ * 
+ * @author Oscar
+ * @version 1.0
+ */
 @SpringBootTest
 @ActiveProfiles("test")
+@Transactional
 public class ArticleTests {
 
     @Autowired
@@ -56,6 +76,8 @@ public class ArticleTests {
             new BarId(bar.getId().toString()),
             new Price(2.5),
             true);
+
+        articleService.createOrUpdateArticle(article);
 
         assertNotNull(article);
         assertNotNull(article.getId());
@@ -199,8 +221,7 @@ public class ArticleTests {
         });
     }
 
-    private Bar createBar() {
-        return barRepository.save(new Bar("Llúpol"));
+    private Bar createBar() throws DuplicateBarException {
+        return barRepository.create(new Bar(new Name("Llúpol")));
     }
-
 }

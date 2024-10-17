@@ -4,6 +4,9 @@ public class CreateBarRequest {
 
     private String name;
 
+    public CreateBarRequest() {
+    }
+
     public CreateBarRequest(String name) {
         this.name = name;
     }

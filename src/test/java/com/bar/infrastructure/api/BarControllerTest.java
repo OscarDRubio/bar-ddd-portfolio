@@ -7,17 +7,12 @@ import com.bar.domain.exception.NullNameException;
 import com.bar.infrastructure.web.controller.dto.CreateBarTableRequest;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.ServletException;
+import jakarta.transaction.Transactional;
 import junit.framework.TestCase;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,9 +26,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ExtendWith(MockitoExtension.class)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ActiveProfiles("test")
+@Transactional
 class BarControllerTest extends TestCase {
 
     @Autowired
@@ -50,11 +44,7 @@ class BarControllerTest extends TestCase {
     """)
     void create() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.post(basePath)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Phenomenon\"}"))
-                .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Phenomenon"));
+        createBar("Phenomenon");
     }
 
     @Test
@@ -64,13 +54,13 @@ class BarControllerTest extends TestCase {
     """)
     void duplicateName() throws Exception {
 
-        createBar("El Loco");
+        createBar("El Loco");  
 
         mockMvc.perform(MockMvcRequestBuilders.post(basePath)
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"name\":\"El Loco\"}"))
-            .andExpect(result -> assertTrue(result.getResolvedException() instanceof DataIntegrityViolationException))
-            .andExpect(MockMvcResultMatchers.status().isConflict());
+            .andExpect(MockMvcResultMatchers.status().isConflict())
+            .andExpect(MockMvcResultMatchers.content().string("The bar name 'El Loco' already exists."));
     }
 
     @Test
@@ -80,13 +70,11 @@ class BarControllerTest extends TestCase {
     """)
     void emptyName() throws Exception {
 
-        Exception exception = assertThrows(ServletException.class, () -> {
-                mockMvc.perform(MockMvcRequestBuilders.post(basePath)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"\"}"));
-        });
-
-        assertTrue(exception.getCause() instanceof EmptyNameException);
+        mockMvc.perform(MockMvcRequestBuilders.post(basePath)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"name\":\"\"}"))
+            .andExpect(MockMvcResultMatchers.status().isBadRequest())
+            .andExpect(result -> assertTrue(result.getResolvedException() instanceof EmptyNameException));
     }
 
     @Test
@@ -96,13 +84,11 @@ class BarControllerTest extends TestCase {
     """)
     void nullName() throws Exception {
 
-        Exception exception = assertThrows(ServletException.class, () -> {
-                mockMvc.perform(MockMvcRequestBuilders.post(basePath)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":null}"));
-        });
-
-        assertTrue(exception.getCause() instanceof NullNameException);
+        mockMvc.perform(MockMvcRequestBuilders.post(basePath)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"name\":null}"))
+            .andExpect(MockMvcResultMatchers.status().isBadRequest())
+            .andExpect(result -> assertTrue(result.getResolvedException() instanceof NullNameException));
     }
 
     @Test
@@ -118,7 +104,7 @@ class BarControllerTest extends TestCase {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(bar.getId().toString()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(bar.getName()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(bar.getName().toString()));
     }
 
     @Test
@@ -142,13 +128,13 @@ class BarControllerTest extends TestCase {
 
         Bar bar = createBar("Tasca");
 
-        String updatedBarJson = "{\"name\": \"Tasca Gat\"}";
-        mockMvc.perform(MockMvcRequestBuilders.put(basePath + "/{id}", bar.getId())
+        String updatedBarJson = "{\"name\":\"Tasca Gat\"}";
+        mockMvc.perform(MockMvcRequestBuilders.put(basePath + "/{id}", bar.getId().toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updatedBarJson))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
-        mockMvc.perform(MockMvcRequestBuilders.get(basePath + "/{id}", bar.getId()))
+        mockMvc.perform(MockMvcRequestBuilders.get(basePath + "/{id}", bar.getId().toString()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Tasca Gat"));
     }
@@ -174,11 +160,14 @@ class BarControllerTest extends TestCase {
     """)
     void modifyEmptyName() throws Exception {
 
+        Bar bar = createBar("Galieta");
+
         String updatedBarJson = "{\"name\": \"\"}";
-        mockMvc.perform(MockMvcRequestBuilders.put(basePath + "/{id}", 2)
+        mockMvc.perform(MockMvcRequestBuilders.put(basePath + "/{id}", bar.getId().toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updatedBarJson))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Name cannot be empty"));        
     }
 
     @Test
@@ -188,11 +177,14 @@ class BarControllerTest extends TestCase {
     """)
     void modifyNullName() throws Exception {
 
+        Bar bar = createBar("Toppings");
+
         String updatedBarJson = "{\"name\": null}";
-        mockMvc.perform(MockMvcRequestBuilders.put(basePath + "/{id}", 2)
+        mockMvc.perform(MockMvcRequestBuilders.put(basePath + "/{id}", bar.getId().toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updatedBarJson))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Name cannot be null"));  
     }
 
     @Test
@@ -292,16 +284,18 @@ class BarControllerTest extends TestCase {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
+        String jsonContent = "{\"name\":\"" + name + "\"}";
+
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post(basePath)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"name\":\"" + name + "\"}"))
-                .andExpect(MockMvcResultMatchers.status().isCreated()) 
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(name)) 
-                .andReturn();
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(jsonContent))
+            .andExpect(MockMvcResultMatchers.status().isCreated()) 
+            .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(name)) 
+            .andReturn();
 
         Bar createdBar = objectMapper.readValue(
-                result.getResponse().getContentAsString(),
-                Bar.class);
+            result.getResponse().getContentAsString(),
+            Bar.class);
 
         return createdBar;
     }

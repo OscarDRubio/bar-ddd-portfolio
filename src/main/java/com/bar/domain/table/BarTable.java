@@ -37,24 +37,24 @@ public class BarTable {
         this.barId = barId;
     }
 
-    public String getId() {
-        return id.toString();
+    public BarTableId getId() {
+        return id;
     }
 
-    public void setId(String id) {
-        this.id = new BarTableId(id);
+    public void setId(BarTableId id) {
+        this.id = id;
     }
 
-    public String getName() {
-        return name.toString();
+    public Name getName() {
+        return name;
     }
 
-    public void setName(String name) {
-        this.name = new Name(name);
+    public void setName(Name name) {
+        this.name = name;
     }
 
-    public String getBarId() {
-        return barId.toString();
+    public BarId getBarId() {
+        return barId;
     }
 
     public void setBarId(BarId barId) {

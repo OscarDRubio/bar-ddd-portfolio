@@ -30,7 +30,7 @@ public class ArticleHistory {
         @AttributeOverride(name = "id", column = @Column(name = "articleId", nullable = false))
     })
     private ArticleId articleId;
-
+    
     @Embedded
     @AttributeOverrides({
         @AttributeOverride(name = "name", column = @Column(name = "name", nullable = false))

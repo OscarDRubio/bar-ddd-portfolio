@@ -19,9 +19,9 @@ public class Bar {
         this.id = new BarId();
     }
 
-    public Bar(String name) {
+    public Bar(Name name) {
         this();
-        this.name = new Name(name);
+        this.name = name;
     }
 
     public BarId getId() {
@@ -32,11 +32,11 @@ public class Bar {
         this.id = id;
     }
 
-    public String getName() {
-        return name.toString();
+    public Name getName() {
+        return name;
     }
 
-    public void setName(String name) {
-        this.name = new Name(name);
+    public void setName(Name name) {
+        this.name = name;
     }
 }

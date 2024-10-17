@@ -85,27 +85,23 @@ public class BarController {
     }
 
     @PostMapping
-    public ResponseEntity<Bar> createBar(@RequestBody CreateBarRequest barDTO)
+    public ResponseEntity<Bar> createBar(@RequestBody CreateBarRequest barRequest)
             throws DuplicateBarException, NullNameException {
 
         Bar bar = new Bar(
-                barDTO.getName());
-        barRepository.save(bar);
+                new Name(barRequest.getName()));
+        barRepository.create(bar);
         return ResponseEntity.status(HttpStatus.CREATED).body(bar);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Bar> updateBar(@PathVariable BarId id, @RequestBody CreateBarRequest barDTO)
-            throws NullNameException {
+            throws NullNameException, DuplicateBarException {
 
         Optional<Bar> barOptional = barRepository.findById(id);
-        if (barOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
         Bar bar = barOptional.get();
-        bar.setName(barDTO.getName());
-        barRepository.save(bar);
+        bar.setName(new Name(barDTO.getName()));
+        barRepository.update(bar);
         return ResponseEntity.ok().body(bar);
     }
 
@@ -116,12 +112,12 @@ public class BarController {
     }
 
     @PostMapping("/{id}/createTable")
-    public ResponseEntity<BarTable> createBarTable(@PathVariable String id, @RequestBody CreateBarTableRequest request) {
+    public ResponseEntity<BarTable> createBarTable(@PathVariable String id, @RequestBody CreateBarTableRequest request) throws DuplicateBarException {
 
         barRepository.findById(new BarId(id))
             .orElseThrow(() -> new EntityNotFoundException("Bar not found"));
         
-        BarTable barTable = barTableRepository.save(
+        BarTable barTable = barTableRepository.create(
             new BarTable(
                 new Name(request.getName()), 
                 new BarId(id)));

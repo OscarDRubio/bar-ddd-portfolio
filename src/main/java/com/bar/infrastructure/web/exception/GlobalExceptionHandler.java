@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.bar.domain.exception.DuplicateBarException;
+import com.bar.domain.exception.EmptyNameException;
 import com.bar.domain.exception.IllegalDecimalException;
 import com.bar.domain.exception.NegativePriceException;
 import com.bar.domain.exception.NullNameException;
@@ -21,11 +22,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DuplicateBarException.class)
     public ResponseEntity<Object> handleDuplicateBarException(DuplicateBarException exception) {
 
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());
+    }
+    @ExceptionHandler(EmptyNameException.class)
+    public ResponseEntity<Object> handleEmptyNameException(EmptyNameException exception) {
+
         Map<String, Object> body = new LinkedHashMap<>();
-        body.put("message", "Error loading the bar");
+        body.put("message", "Name cannot be empty");
         body.put("error", exception.getMessage());
 
-        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(NullNameException.class)
     public ResponseEntity<Object> handleNullNameException(NullNameException exception) {

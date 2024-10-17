@@ -13,6 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import com.bar.domain.bar.Bar;
 import com.bar.domain.bar.BarId;
+import com.bar.domain.exception.DuplicateBarException;
 import com.bar.domain.exception.EmptyNameException;
 import com.bar.domain.exception.NullBarIdException;
 import com.bar.domain.exception.NullNameException;
@@ -62,15 +63,14 @@ public class BarTableTests {
             new Name("Mesa 1"), 
             new BarId(bar.getId().toString()));
 
-        barTableRepository.save(barTable);
+        barTableRepository.create(barTable);
 
         BarTable barTable2 = new BarTable(
             new Name("Mesa 1"), 
             new BarId(bar.getId().toString()));
 
         assertThrows(DataIntegrityViolationException.class, () -> {
-            barTableRepository.save(barTable2);
-            barTableRepository.flush();
+            barTableRepository.create(barTable2);
         });
     }
 
@@ -116,8 +116,8 @@ public class BarTableTests {
         });
     }
 
-    private Bar createBar() {
-        return barRepository.save(new Bar("Llúpol"));
+    private Bar createBar() throws DuplicateBarException {
+        return barRepository.create(new Bar(new Name("Llúpol")));
     }
 
 }
