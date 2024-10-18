@@ -38,7 +38,7 @@ public class BarRepository implements IBarRepository {
 
     @Override
     public boolean existsByNameAndAnotherId(Bar bar) {
-        return jpaBarRepository.existsByName_NameAndIdIsNot(bar.getName().getName(), bar.getId());
+        return jpaBarRepository.existsByName_NameAndIdIsNot(bar.getName().toString(), bar.getId());
     }
 
     @Override

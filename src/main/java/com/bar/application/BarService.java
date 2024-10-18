@@ -33,7 +33,7 @@ public class BarService {
     public Bar create(Bar bar) throws DuplicateBarException {
 
         if (barRepository.existsByNameAndAnotherId(bar)) {
-            throw new DuplicateBarException("The bar name '" + bar.getName().getName() + "' already exists.");
+            throw new DuplicateBarException();
         }
 
         return barRepository.save(bar);
@@ -46,7 +46,7 @@ public class BarService {
 
         bar.setName(new Name(updateBarRequest.getName()));
         if (barRepository.existsByNameAndAnotherId(bar)) {
-            throw new DuplicateBarException("A bar with the name '" + bar.getName().getName() + "' already exists.");
+            throw new DuplicateBarException();
         }
         return barRepository.save(bar);
     }

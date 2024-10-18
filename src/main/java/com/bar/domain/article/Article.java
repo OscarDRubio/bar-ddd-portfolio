@@ -25,21 +25,25 @@ public class Article {
 
     @EmbeddedId
     private ArticleId id;
+
     @Embedded
     @AttributeOverrides({
         @AttributeOverride(name = "name", column = @Column(name = "name", nullable = false))
     })
     private Name name;
+
     @Embedded
     @AttributeOverrides({
         @AttributeOverride(name = "id", column = @Column(name = "barId", nullable = false))
     })
     private BarId barId;
+
     @Embedded
     @AttributeOverrides({
         @AttributeOverride(name = "price", column = @Column(name = "price", nullable = false))
     })
     private Price price;
+    
     @Column(name = "active", nullable = false)
     private boolean active;
 
@@ -47,15 +51,22 @@ public class Article {
         this.id = new ArticleId();
     }
 
-    public Article(Name name, BarId barId, Price price, boolean active) throws NullNameException {
+    public Article(
+        Name name,
+        BarId barId,
+        Price price,
+        boolean active) {
 
         this();
         if(name == null) throw new NullNameException();
         this.name = name;
+
         if(barId == null) throw new NullBarIdException();
         this.barId = barId;
+
         if(price == null) throw new NullPriceException();
         this.price = price;
+        
         this.active = active;
     }
 

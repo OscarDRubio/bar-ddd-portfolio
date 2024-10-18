@@ -1,5 +1,6 @@
 package com.bar.domain.bar;
 
+import com.bar.domain.exception.NullNameException;
 import com.bar.domain.shared.Name;
 import jakarta.persistence.*;
 
@@ -15,12 +16,15 @@ public class Bar {
     })
     private Name name;
 
-    public Bar() {
+    private Bar() {
         this.id = new BarId();
     }
 
     public Bar(Name name) {
+        
         this();
+
+        if(name == null) throw new NullNameException();
         this.name = name;
     }
 
