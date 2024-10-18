@@ -7,30 +7,26 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import com.bar.application.BarService;
 import com.bar.domain.bar.Bar;
 import com.bar.domain.bar.BarId;
 import com.bar.domain.exception.DuplicateBarException;
+import com.bar.domain.exception.DuplicateBarTableException;
 import com.bar.domain.exception.EmptyNameException;
 import com.bar.domain.exception.NullBarIdException;
 import com.bar.domain.exception.NullNameException;
 import com.bar.domain.shared.Name;
 import com.bar.domain.table.BarTable;
-import com.bar.infrastructure.repository.BarRepository;
-import com.bar.infrastructure.repository.BarTableRepository;
 
-@DataJpaTest
+@SpringBootTest
 @ActiveProfiles("test")
 public class BarTableTests {
 
     @Autowired
-    private BarTableRepository barTableRepository;
-
-    @Autowired
-    private BarRepository barRepository;
+    private BarService barService;
 
     @Test()
     @DisplayName("""
@@ -39,14 +35,14 @@ public class BarTableTests {
     """)
     void create() throws Exception {
 
-        Bar bar = createBar();
+        Bar bar = createBar("Llúpol");
         BarTable barTable = new BarTable(
             new Name("Mesa 1"), 
             new BarId(bar.getId().toString()));
 
         assertNotNull(barTable);
         assertNotNull(barTable.getId());
-        assertEquals("Mesa 1", barTable.getName());
+        assertEquals("Mesa 1", barTable.getName().toString());
         assertEquals(bar.getId().toString(), barTable.getBarId().toString());
     }
 
@@ -57,20 +53,20 @@ public class BarTableTests {
     """)
     void createDuplicate() throws Exception {
 
-        Bar bar = createBar();
+        Bar bar = createBar("Pizzeria Rosi");
 
         BarTable barTable = new BarTable(
             new Name("Mesa 1"), 
             new BarId(bar.getId().toString()));
 
-        barTableRepository.create(barTable);
+        barService.createBarTable(barTable);
 
         BarTable barTable2 = new BarTable(
             new Name("Mesa 1"), 
             new BarId(bar.getId().toString()));
 
-        assertThrows(DataIntegrityViolationException.class, () -> {
-            barTableRepository.create(barTable2);
+        assertThrows(DuplicateBarTableException.class, () -> {
+            barService.createBarTable(barTable2);
         });
     }
 
@@ -95,7 +91,7 @@ public class BarTableTests {
     """)
     void createWithEmptyName() throws Exception {
  
-        Bar bar = createBar();
+        Bar bar = createBar("Nou Granada");
         assertThrows(EmptyNameException.class, () -> {
             new BarTable(
                 new Name(""), 
@@ -110,14 +106,14 @@ public class BarTableTests {
     """)
     void createWithNullName() throws Exception {
  
-        Bar bar = createBar();
+        Bar bar = createBar("Standby");
         assertThrows(NullNameException.class, () -> {
             new BarTable(null, bar.getId());
         });
     }
 
-    private Bar createBar() throws DuplicateBarException {
-        return barRepository.create(new Bar(new Name("Llúpol")));
+    private Bar createBar(String barName) throws DuplicateBarException {
+        return barService.create(new Bar(new Name(barName)));
     }
 
 }

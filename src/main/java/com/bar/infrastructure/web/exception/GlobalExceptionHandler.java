@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.bar.domain.exception.DuplicateBarException;
+import com.bar.domain.exception.DuplicateBarTableException;
 import com.bar.domain.exception.EmptyNameException;
 import com.bar.domain.exception.IllegalDecimalException;
 import com.bar.domain.exception.NegativePriceException;
@@ -21,6 +22,11 @@ import java.util.Map;
 public class GlobalExceptionHandler {
     @ExceptionHandler(DuplicateBarException.class)
     public ResponseEntity<Object> handleDuplicateBarException(DuplicateBarException exception) {
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());
+    }
+    @ExceptionHandler(DuplicateBarTableException.class)
+    public ResponseEntity<Object> handleDuplicateBarTableException(DuplicateBarTableException exception) {
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());
     }

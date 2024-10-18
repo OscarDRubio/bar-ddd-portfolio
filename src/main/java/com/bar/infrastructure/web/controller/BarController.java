@@ -1,13 +1,13 @@
 package com.bar.infrastructure.web.controller;
 
+import com.bar.application.BarService;
 import com.bar.domain.bar.Bar;
 import com.bar.domain.bar.BarId;
 import com.bar.domain.exception.DuplicateBarException;
+import com.bar.domain.exception.DuplicateBarTableException;
 import com.bar.domain.exception.NullNameException;
 import com.bar.domain.shared.Name;
 import com.bar.domain.table.BarTable;
-import com.bar.infrastructure.repository.BarRepository;
-import com.bar.infrastructure.repository.BarTableRepository;
 import com.bar.infrastructure.web.controller.dto.CreateBarRequest;
 import com.bar.infrastructure.web.controller.dto.CreateBarTableRequest;
 
@@ -16,8 +16,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.persistence.EntityNotFoundException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -33,13 +31,11 @@ import java.util.Optional;
 @RequestMapping("/api/bar")
 public class BarController {
 
-    private final BarRepository barRepository;
-    private final BarTableRepository barTableRepository;
+    private final BarService barService;
 
     @Autowired
-    public BarController(BarRepository barRepository, BarTableRepository barTableRepository) {
-        this.barRepository = barRepository;
-        this.barTableRepository = barTableRepository;
+    public BarController(BarService barService) {
+        this.barService = barService;
     }
 
     @Operation(
@@ -55,7 +51,7 @@ public class BarController {
     })
     @GetMapping
     public ResponseEntity<Page<Bar>> getAllBars(Pageable pageable) {
-        Page<Bar> barsPage = barRepository.findAll(pageable);
+        Page<Bar> barsPage = barService.findAll(pageable);
         return ResponseEntity.ok(barsPage);
     }
 
@@ -73,13 +69,13 @@ public class BarController {
     @Cacheable("barListByNameCache")
     @GetMapping("/search")
     public ResponseEntity<Page<Bar>> searchBarByName(@RequestParam String keyword, Pageable pageable) {
-        Page<Bar> barsPage = barRepository.findByNameContaining(keyword, pageable);
+        Page<Bar> barsPage = barService.findByNameContaining(keyword, pageable);
         return ResponseEntity.ok(barsPage);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Bar> getBarById(@PathVariable String id) {
-        Optional<Bar> barOptional = barRepository.findById(new BarId(id));
+        Optional<Bar> barOptional = barService.findById(id);
         return barOptional.map(bar -> ResponseEntity.ok().body(bar))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -90,34 +86,28 @@ public class BarController {
 
         Bar bar = new Bar(
                 new Name(barRequest.getName()));
-        barRepository.create(bar);
+        barService.create(bar);
         return ResponseEntity.status(HttpStatus.CREATED).body(bar);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Bar> updateBar(@PathVariable BarId id, @RequestBody CreateBarRequest barDTO)
+    public ResponseEntity<Bar> updateBar(@PathVariable String id, @RequestBody CreateBarRequest updateBarRequest)
             throws NullNameException, DuplicateBarException {
 
-        Optional<Bar> barOptional = barRepository.findById(id);
-        Bar bar = barOptional.get();
-        bar.setName(new Name(barDTO.getName()));
-        barRepository.update(bar);
+        Bar bar = barService.update(new BarId(id), updateBarRequest);
         return ResponseEntity.ok().body(bar);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteBar(@PathVariable BarId id) {
-        barRepository.deleteById(id);
+    public ResponseEntity<Object> deleteBar(@PathVariable String id) {
+        barService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/createTable")
-    public ResponseEntity<BarTable> createBarTable(@PathVariable String id, @RequestBody CreateBarTableRequest request) throws DuplicateBarException {
+    public ResponseEntity<BarTable> createBarTable(@PathVariable String id, @RequestBody CreateBarTableRequest request) throws DuplicateBarException, DuplicateBarTableException {
 
-        barRepository.findById(new BarId(id))
-            .orElseThrow(() -> new EntityNotFoundException("Bar not found"));
-        
-        BarTable barTable = barTableRepository.create(
+        BarTable barTable = barService.createBarTable(
             new BarTable(
                 new Name(request.getName()), 
                 new BarId(id)));

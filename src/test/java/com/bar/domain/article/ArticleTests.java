@@ -16,6 +16,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.bar.application.ArticleService;
+import com.bar.application.BarService;
 import com.bar.domain.bar.Bar;
 import com.bar.domain.bar.BarId;
 import com.bar.domain.exception.DuplicateBarException;
@@ -26,7 +27,6 @@ import com.bar.domain.shared.Name;
 import com.bar.domain.shared.Price;
 import com.bar.infrastructure.repository.ArticleHistoryRepository;
 import com.bar.infrastructure.repository.ArticleRepository;
-import com.bar.infrastructure.repository.BarRepository;
 
 import jakarta.transaction.Transactional;
 
@@ -51,6 +51,8 @@ import jakarta.transaction.Transactional;
 @Transactional
 public class ArticleTests {
 
+    //TODO: Remove access to repositories and use Services
+
     @Autowired
     private ArticleRepository articleRepository;
 
@@ -61,7 +63,7 @@ public class ArticleTests {
     private ArticleService articleService; 
 
     @Autowired
-    private BarRepository barRepository;
+    private BarService barService;
 
     @Test()
     @DisplayName("""
@@ -70,7 +72,7 @@ public class ArticleTests {
     """)
     void createAndSave() throws Exception {
 
-        Bar bar = createBar();
+        Bar bar = createBar("Bar Pepe");
         Article article = new Article(
             new Name("Coca Cola"), 
             new BarId(bar.getId().toString()),
@@ -101,7 +103,7 @@ public class ArticleTests {
     """)
     void updateAndSave() throws Exception {
 
-        Bar bar = createBar();
+        Bar bar = createBar("Bar Paco");
         Article article = new Article(
             new Name("Fanta Naranja 33cl"), 
             new BarId(bar.getId().toString()),
@@ -146,7 +148,7 @@ public class ArticleTests {
     """)
     void createDuplicate() throws Exception {
 
-        Bar bar = createBar();
+        Bar bar = createBar("Ca Marta");
 
         Article article = new Article(
             new Name("Polvoron Canela"), 
@@ -192,7 +194,7 @@ public class ArticleTests {
     """)
     void createWithEmptyName() throws Exception {
  
-        Bar bar = createBar();
+        Bar bar = createBar("Ca Joan");
         assertThrows(EmptyNameException.class, () -> {
 
             new Article(
@@ -210,7 +212,7 @@ public class ArticleTests {
     """)
     void createWithNullName() throws Exception {
  
-        Bar bar = createBar();
+        Bar bar = createBar("Casa Madrid");
         assertThrows(NullNameException.class, () -> {
 
             new Article(
@@ -221,7 +223,7 @@ public class ArticleTests {
         });
     }
 
-    private Bar createBar() throws DuplicateBarException {
-        return barRepository.create(new Bar(new Name("Llúpol")));
+    private Bar createBar(String barName) throws DuplicateBarException {
+        return barService.create(new Bar(new Name(barName)));
     }
 }

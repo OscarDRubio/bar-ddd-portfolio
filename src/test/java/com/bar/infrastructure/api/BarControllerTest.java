@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,10 +29,13 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @Transactional
 class BarControllerTest extends TestCase {
 
-    @Autowired
-    private MockMvc mockMvc;
+    private final MockMvc mockMvc;
+    private final ObjectMapper objectMapper;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    public BarControllerTest(@Autowired MockMvc mockMvc) {
+        this.mockMvc = mockMvc;
+        this.objectMapper = new ObjectMapper();
+    }
     
     private final String basePath = "/api/bar";
 
@@ -255,29 +257,6 @@ class BarControllerTest extends TestCase {
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof EntityNotFoundException));
-    }
-
-    @Test
-    @DisplayName("""
-        When I try to create two BarTables
-        With the same name in the same Bar
-        Then it returns a 409 Conflict and a DataIntegrityViolationException
-    """)
-    void createDuplicateBarTableNameInSameBar() throws Exception {
-
-        Bar bar = createBar("Lo de Ponxe en el Kinto Pino");
-        CreateBarTableRequest request = new CreateBarTableRequest("Barra 1");
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/bar/" + bar.getId().toString() + "/createTable")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-                .andExpect(MockMvcResultMatchers.status().isCreated());
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/bar/" + bar.getId().toString() + "/createTable")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof DataIntegrityViolationException))
-                .andExpect(MockMvcResultMatchers.status().isConflict());
     }
 
     private Bar createBar(String name) throws Exception {
