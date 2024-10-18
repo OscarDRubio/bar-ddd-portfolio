@@ -16,13 +16,15 @@ public class Bar {
     })
     private Name name;
 
-    private Bar() {
-        this.id = new BarId();
-    }
+    private Bar() {}
 
     public Bar(Name name) {
+        this(null, name);
+    }
+
+    public Bar(BarId id, Name name) {
         
-        this();
+        this.id = id == null ? new BarId() : id;
 
         if(name == null) throw new NullNameException();
         this.name = name;
@@ -42,5 +44,9 @@ public class Bar {
 
     public void setName(Name name) {
         this.name = name;
+    }
+
+    public BarDto toDto() {
+        return new BarDto(this.id.toString(), this.name.toString());
     }
 }
