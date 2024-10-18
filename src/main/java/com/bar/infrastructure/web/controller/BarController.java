@@ -4,7 +4,6 @@ import com.bar.application.BarService;
 import com.bar.domain.bar.Bar;
 import com.bar.domain.bar.BarId;
 import com.bar.domain.exception.DuplicateBarException;
-import com.bar.domain.exception.DuplicateBarTableException;
 import com.bar.domain.exception.NullNameException;
 import com.bar.domain.shared.Name;
 import com.bar.domain.table.BarTable;
@@ -91,11 +90,10 @@ public class BarController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Bar> updateBar(@PathVariable String id, @RequestBody CreateBarRequest updateBarRequest)
-            throws NullNameException, DuplicateBarException {
+    @ResponseStatus(value = HttpStatus.OK)
+    public void updateBar(@PathVariable String id, @RequestBody CreateBarRequest updateBarRequest) {
 
-        Bar bar = barService.update(new BarId(id), updateBarRequest);
-        return ResponseEntity.ok().body(bar);
+        barService.update(new BarId(id), updateBarRequest);
     }
 
     @DeleteMapping("/{id}")
@@ -105,7 +103,7 @@ public class BarController {
     }
 
     @PostMapping("/{id}/createTable")
-    public ResponseEntity<BarTable> createBarTable(@PathVariable String id, @RequestBody CreateBarTableRequest request) throws DuplicateBarException, DuplicateBarTableException {
+    public ResponseEntity<BarTable> createBarTable(@PathVariable String id, @RequestBody CreateBarTableRequest request) {
 
         BarTable barTable = barService.createBarTable(
             new BarTable(

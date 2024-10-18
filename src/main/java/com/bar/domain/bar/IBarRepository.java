@@ -11,8 +11,7 @@ public interface IBarRepository {
     Optional<Bar> findById(BarId id);
     Optional<Bar> findByName(Name name);
     Page<Bar> findByNameContaining(String keyword, Pageable pageable);
-    boolean existsByNameAndAnotherId(Bar bar);
-    Bar save(Bar bar);
+    void save(Bar bar);
     void deleteById(BarId id);
     Page<Bar> findAll(Pageable pageable);
 }

@@ -1,6 +1,7 @@
 package com.bar.infrastructure.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -8,6 +9,7 @@ import com.bar.domain.bar.Bar;
 import com.bar.domain.bar.BarId;
 import com.bar.domain.shared.Name;
 import com.bar.domain.bar.IBarRepository;
+import com.bar.domain.exception.DuplicateBarException;
 
 import java.util.Optional;
 
@@ -37,13 +39,14 @@ public class BarRepository implements IBarRepository {
     }
 
     @Override
-    public boolean existsByNameAndAnotherId(Bar bar) {
-        return jpaBarRepository.existsByName_NameAndIdIsNot(bar.getName().toString(), bar.getId());
-    }
+    public void save(Bar bar) {
 
-    @Override
-    public Bar save(Bar bar) {
-        return jpaBarRepository.save(bar);
+        try {
+            jpaBarRepository.save(bar);
+        }
+        catch (DataIntegrityViolationException ex) {
+            throw new DuplicateBarException();
+        }
     }
 
     @Override

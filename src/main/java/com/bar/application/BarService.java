@@ -32,23 +32,17 @@ public class BarService {
 
     public Bar create(Bar bar) throws DuplicateBarException {
 
-        if (barRepository.existsByNameAndAnotherId(bar)) {
-            throw new DuplicateBarException();
-        }
-
-        return barRepository.save(bar);
+        barRepository.save(bar);
+        return bar;
     }
 
-    public Bar update(BarId barId, CreateBarRequest updateBarRequest) throws DuplicateBarException {
+    public void update(BarId barId, CreateBarRequest updateBarRequest) throws DuplicateBarException {
 
         Bar bar = barRepository.findById(barId)
              .orElseThrow(() -> new EntityNotFoundException("Bar with id " + barId.getId().toString() + " not found"));
 
         bar.setName(new Name(updateBarRequest.getName()));
-        if (barRepository.existsByNameAndAnotherId(bar)) {
-            throw new DuplicateBarException();
-        }
-        return barRepository.save(bar);
+        barRepository.save(bar);
     }
     
     public Page<Bar> findAll(Pageable pageable) {

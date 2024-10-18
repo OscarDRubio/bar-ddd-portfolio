@@ -8,6 +8,8 @@ import jakarta.persistence.*;
 @Table(name="bar", indexes = {@Index(name = "idx_name", columnList = "name")})
 public class Bar {
 
+    //TODO: Hacer pruebas en MongoDB también
+    //TODO: No me está reconociendo la id
     @EmbeddedId
     private BarId id;
     @Embedded
@@ -32,10 +34,6 @@ public class Bar {
 
     public BarId getId() {
         return id;
-    }
-
-    public void setId(BarId id) {
-        this.id = id;
     }
 
     public Name getName() {

@@ -14,7 +14,6 @@ import java.util.Optional;
 public interface JpaBarRepository extends JpaRepository<Bar, BarId> {
     Optional<Bar> findByName_Name(String name);
     Page<Bar> findByName_NameContaining(String name, Pageable pageable);
-    boolean existsByName_NameAndIdIsNot(String name, BarId id);
     @Override
     @NonNull
     Page<Bar> findAll(@NonNull Pageable pageable); 
