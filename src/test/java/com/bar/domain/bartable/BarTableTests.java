@@ -43,12 +43,12 @@ public class BarTableTests {
         Bar bar = createBar("Llúpol");
         BarTable barTable = new BarTable(
             new Name("Mesa 1"), 
-            new BarId(bar.getId().toString()));
+            new BarId(bar.toDto().id()));
 
         assertNotNull(barTable);
         assertNotNull(barTable.getId());
         assertEquals("Mesa 1", barTable.getName().toString());
-        assertEquals(bar.getId().toString(), barTable.getBarId().toString());
+        assertEquals(bar.toDto().id(), barTable.getBarId().toString());
     }
 
     //TODO: Arreglar test
@@ -64,13 +64,13 @@ public class BarTableTests {
 
         BarTable barTable = new BarTable(
             new Name("Mesa 1"), 
-            new BarId(bar.getId().toString()));
+            new BarId(bar.toDto().id()));
 
             barRepository.createBarTable(barTable);
 
         BarTable barTable2 = new BarTable(
             new Name("Mesa 1"), 
-            new BarId(bar.getId().toString()));
+            new BarId(bar.toDto().id()));
 
         assertThrows(DuplicateBarTableException.class, () -> {
             barRepository.createBarTable(barTable2);
@@ -103,7 +103,7 @@ public class BarTableTests {
         assertThrows(EmptyNameException.class, () -> {
             new BarTable(
                 new Name(""), 
-                new BarId(bar.getId().toString()));
+                new BarId(bar.toDto().id()));
         });
     }
 
@@ -116,7 +116,7 @@ public class BarTableTests {
  
         Bar bar = createBar("Standby");
         assertThrows(NullNameException.class, () -> {
-            new BarTable(null, bar.getId());
+            new BarTable(null, new BarId(bar.toDto().id()));
         });
     }
 

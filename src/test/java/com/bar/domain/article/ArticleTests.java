@@ -82,7 +82,7 @@ public class ArticleTests {
         Bar bar = createBar("Bar Pepe");
         Article article = new Article(
             new Name("Coca Cola"), 
-            new BarId(bar.getId().toString()),
+            new BarId(bar.toDto().id()),
             new Price(2.5),
             true);
 
@@ -91,7 +91,7 @@ public class ArticleTests {
         assertNotNull(article);
         assertNotNull(article.getId());
         assertEquals("Coca Cola", article.getName().toString());
-        assertEquals(bar.getId().toString(), article.getBarId().toString());
+        assertEquals(bar.toDto().id(), article.getBarId().toString());
 
         List<ArticleHistory> articleHistories = articleHistoryRepository.findAllByArticleId(article.getId());
         assertFalse(articleHistories.isEmpty());
@@ -113,7 +113,7 @@ public class ArticleTests {
         Bar bar = createBar("Bar Paco");
         Article article = new Article(
             new Name("Fanta Naranja 33cl"), 
-            new BarId(bar.getId().toString()),
+            new BarId(bar.toDto().id()),
             new Price(1.5),
             true);
 
@@ -129,7 +129,7 @@ public class ArticleTests {
 
         assertNotNull(savedArticleOpt);
         assertEquals("Fanta Naranja Lata", savedArticleOpt.get().getName().toString());
-        assertEquals(bar.getId().toString(), savedArticleOpt.get().getBarId().toString());
+        assertEquals(bar.toDto().id(), savedArticleOpt.get().getBarId().toString());
         assertEquals(1.75, savedArticleOpt.get().getPrice().asDouble());
 
         List<ArticleHistory> articleHistories = articleHistoryRepository.findAllByArticleId(article.getId());
@@ -159,7 +159,7 @@ public class ArticleTests {
 
         Article article = new Article(
             new Name("Polvoron Canela"), 
-            new BarId(bar.getId().toString()),
+            new BarId(bar.toDto().id()),
             new Price(22.5),
             true);
 
@@ -167,7 +167,7 @@ public class ArticleTests {
 
         Article duplArticle = new Article(
             new Name("Polvoron Canela"), 
-            new BarId(bar.getId().toString()),
+            new BarId(bar.toDto().id()),
             new Price(27.5),
             false);
 
@@ -206,7 +206,7 @@ public class ArticleTests {
 
             new Article(
                 new Name(""), 
-                bar.getId(),
+                new BarId(bar.toDto().id()),
                 new Price(22.5),
                 true);
         });
@@ -224,7 +224,7 @@ public class ArticleTests {
 
             new Article(
                 new Name(null), 
-                bar.getId(),
+                new BarId(bar.toDto().id()),
                 new Price(22.5),
                 true);
         });

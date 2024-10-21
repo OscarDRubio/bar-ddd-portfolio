@@ -2,6 +2,7 @@ package com.bar.infrastructure.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.bar.domain.bar.Bar;
+import com.bar.domain.bar.BarId;
 import com.bar.domain.exception.EmptyNameException;
 import com.bar.domain.exception.NullNameException;
 import com.bar.infrastructure.web.controller.dto.CreateBarTableRequest;
@@ -102,11 +103,11 @@ class BarControllerTest extends TestCase {
 
         Bar bar = createBar("Sala Moon");
 
-        mockMvc.perform(MockMvcRequestBuilders.get(basePath + "/" + bar.getId().toString())
+        mockMvc.perform(MockMvcRequestBuilders.get(basePath + "/" + bar.toDto().id())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(bar.getId().toString()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(bar.getName().toString()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(bar.toDto().id()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(bar.toDto().name()));
     }
 
     @Test
@@ -131,12 +132,12 @@ class BarControllerTest extends TestCase {
         Bar bar = createBar("Tasca");
 
         String updatedBarJson = "{\"name\":\"Tasca Gat\"}";
-        mockMvc.perform(MockMvcRequestBuilders.put(basePath + "/{id}", bar.getId().toString())
+        mockMvc.perform(MockMvcRequestBuilders.put(basePath + "/{id}", bar.toDto().id())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updatedBarJson))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
-        mockMvc.perform(MockMvcRequestBuilders.get(basePath + "/{id}", bar.getId().toString()))
+        mockMvc.perform(MockMvcRequestBuilders.get(basePath + "/{id}", bar.toDto().id()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Tasca Gat"));
     }
@@ -165,7 +166,7 @@ class BarControllerTest extends TestCase {
         Bar bar = createBar("Galieta");
 
         String updatedBarJson = "{\"name\": \"\"}";
-        mockMvc.perform(MockMvcRequestBuilders.put(basePath + "/{id}", bar.getId().toString())
+        mockMvc.perform(MockMvcRequestBuilders.put(basePath + "/{id}", bar.toDto().id())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updatedBarJson))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -182,7 +183,7 @@ class BarControllerTest extends TestCase {
         Bar bar = createBar("Toppings");
 
         String updatedBarJson = "{\"name\": null}";
-        mockMvc.perform(MockMvcRequestBuilders.put(basePath + "/{id}", bar.getId().toString())
+        mockMvc.perform(MockMvcRequestBuilders.put(basePath + "/{id}", bar.toDto().id())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updatedBarJson))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -214,11 +215,11 @@ class BarControllerTest extends TestCase {
 
         Bar bar = createBar("Black Note");
 
-        mockMvc.perform(MockMvcRequestBuilders.delete(basePath + "/" + bar.getId())
+        mockMvc.perform(MockMvcRequestBuilders.delete(basePath + "/" + new BarId(bar.toDto().id()))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 
-        mockMvc.perform(MockMvcRequestBuilders.get(basePath + bar.getId()))
+        mockMvc.perform(MockMvcRequestBuilders.get(basePath + new BarId(bar.toDto().id())))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
@@ -233,7 +234,7 @@ class BarControllerTest extends TestCase {
 
         CreateBarTableRequest request = new CreateBarTableRequest("Barra 1");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/bar/" + bar.getId().toString() + "/createTable")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/bar/" + bar.toDto().id() + "/createTable")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(MockMvcResultMatchers.status().isCreated())

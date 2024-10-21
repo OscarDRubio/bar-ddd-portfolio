@@ -35,18 +35,6 @@ public class Bar {
         this.name = name;
     }
 
-    public BarId getId() {
-        return id;
-    }
-
-    public Name getName() {
-        return name;
-    }
-
-    public void setName(Name name) {
-        this.name = name;
-    }
-
     public BarDto toDto() {
         return new BarDto(this.id.toString(), this.name.toString());
     }
