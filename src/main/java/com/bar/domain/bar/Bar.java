@@ -18,7 +18,10 @@ public class Bar {
     })
     private Name name;
 
-    private Bar() {}
+    @SuppressWarnings("unused")
+    private Bar() {
+        // Constructor marked as "unused" but needed for JPA
+    }
 
     public Bar(Name name) {
         this(null, name);

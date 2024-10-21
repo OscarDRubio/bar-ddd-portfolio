@@ -6,8 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.bar.domain.article.Article;
 import com.bar.domain.article.ArticleHistory;
-import com.bar.infrastructure.repository.ArticleHistoryRepository;
-import com.bar.infrastructure.repository.ArticleRepository;
+import com.bar.infrastructure.repository.article.ArticleHistoryRepository;
+import com.bar.infrastructure.repository.article.ArticleRepository;
 
 import java.util.List;
 

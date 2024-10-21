@@ -1,4 +1,4 @@
-package com.bar.infrastructure.repository;
+package com.bar.infrastructure.repository.bartable;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;

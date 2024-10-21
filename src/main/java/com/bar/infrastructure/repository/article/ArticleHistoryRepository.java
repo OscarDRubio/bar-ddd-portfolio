@@ -1,4 +1,4 @@
-package com.bar.infrastructure.repository;
+package com.bar.infrastructure.repository.article;
 
 import java.util.List;
 

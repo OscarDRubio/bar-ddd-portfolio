@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bar.domain.bar.BarId;
 import com.bar.domain.table.BarTable;
-import com.bar.infrastructure.repository.BarTableRepository;
+import com.bar.infrastructure.repository.bartable.BarTableRepository;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 

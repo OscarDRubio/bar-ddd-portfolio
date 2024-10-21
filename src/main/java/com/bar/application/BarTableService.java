@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.bar.domain.exception.DuplicateBarTableException;
 import com.bar.domain.table.BarTable;
-import com.bar.infrastructure.repository.BarTableRepository;
+import com.bar.infrastructure.repository.bartable.BarTableRepository;
 
 @Service
 public class BarTableService {

@@ -16,7 +16,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.bar.application.ArticleService;
-import com.bar.application.BarService;
 import com.bar.domain.bar.Bar;
 import com.bar.domain.bar.BarId;
 import com.bar.domain.exception.DuplicateBarException;
@@ -25,11 +24,14 @@ import com.bar.domain.exception.NullBarIdException;
 import com.bar.domain.exception.NullNameException;
 import com.bar.domain.shared.Name;
 import com.bar.domain.shared.Price;
-import com.bar.infrastructure.repository.ArticleHistoryRepository;
-import com.bar.infrastructure.repository.ArticleRepository;
+import com.bar.infrastructure.repository.article.ArticleHistoryRepository;
+import com.bar.infrastructure.repository.article.ArticleRepository;
+import com.bar.infrastructure.repository.bar.BarRepository;
+import com.bar.infrastructure.web.controller.dto.BarRequest;
 
 import jakarta.transaction.Transactional;
 
+//TODO: Add to every test and Controller
 /**
  * This class contains unit tests for the Article entity, which represents 
  * items offered in a bar. The tests cover various scenarios for creating, 
@@ -53,17 +55,22 @@ public class ArticleTests {
 
     //TODO: Remove access to repositories and use Services
 
-    @Autowired
-    private ArticleRepository articleRepository;
+    private final ArticleRepository articleRepository;
+    private final ArticleHistoryRepository articleHistoryRepository;
+    private final ArticleService articleService; 
+    private final BarRepository barRepository;
 
     @Autowired
-    private ArticleHistoryRepository articleHistoryRepository;
+    public ArticleTests(ArticleRepository articleRepository,
+        ArticleHistoryRepository articleHistoryRepository,
+        ArticleService articleService,
+        BarRepository barRepository) {
 
-    @Autowired
-    private ArticleService articleService; 
-
-    @Autowired
-    private BarService barService;
+        this.articleRepository = articleRepository;
+        this.articleHistoryRepository = articleHistoryRepository;
+        this.articleService = articleService;
+        this.barRepository = barRepository;
+    }
 
     @Test()
     @DisplayName("""
@@ -224,6 +231,7 @@ public class ArticleTests {
     }
 
     private Bar createBar(String barName) throws DuplicateBarException {
-        return barService.create(new Bar(new Name(barName)));
+        BarRequest barRequest = new BarRequest(barName);
+        return barRepository.create(barRequest);
     }
 }

@@ -1,4 +1,4 @@
-package com.bar.infrastructure.repository;
+package com.bar.infrastructure.repository.article;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

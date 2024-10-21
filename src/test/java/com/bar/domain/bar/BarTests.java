@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
 import com.bar.domain.exception.NullNameException;
 import com.bar.domain.shared.Name;
 
@@ -27,7 +28,7 @@ public class BarTests {
         When I try to create a valid new Bar
         Then its state is correct
     """)
-    void create() throws Exception {
+    void createWithId() throws Exception {
 
         Bar bar = new Bar(new BarId("BarId"), new Name("Bar Test"));
         assertEquals(bar.toDto(), new BarDto("BarId", "Bar Test"));

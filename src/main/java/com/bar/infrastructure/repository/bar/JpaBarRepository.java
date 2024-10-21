@@ -1,4 +1,4 @@
-package com.bar.infrastructure.repository;
+package com.bar.infrastructure.repository.bar;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,4 +17,12 @@ public interface JpaBarRepository extends JpaRepository<Bar, BarId> {
     @Override
     @NonNull
     Page<Bar> findAll(@NonNull Pageable pageable); 
+    default Optional<Bar> findById(String barIdString) {
+        BarId barId = new BarId(barIdString);
+        return findById(barId);
+    }
+    default void deleteById(String barIdString) {
+        BarId barId = new BarId(barIdString);
+        deleteById(barId);
+    }
 }

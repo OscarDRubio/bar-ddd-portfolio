@@ -11,7 +11,7 @@ import com.bar.domain.bar.Bar;
 import com.bar.domain.bar.BarId;
 import com.bar.domain.exception.DuplicateBarException;
 import com.bar.domain.shared.Name;
-import com.bar.infrastructure.repository.BarRepository;
+import com.bar.infrastructure.repository.bar.BarRepository;
 
 //TODO: Remove SpringBootTest full load
 @SpringBootTest

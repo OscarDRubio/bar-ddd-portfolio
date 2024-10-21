@@ -1,29 +1,52 @@
 package com.bar.application;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import com.bar.domain.bar.Bar;
-import com.bar.domain.shared.Name;
+
+import com.bar.domain.exception.DuplicateBarException;
+import com.bar.infrastructure.repository.bar.BarRepository;
+import com.bar.infrastructure.web.controller.dto.BarRequest;
+
 import jakarta.transaction.Transactional;
 import junit.framework.TestCase;
 
 @SpringBootTest
-@AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Transactional
 public class BarServiceTests extends TestCase {
 
-    private final BarService barService;
+    private final BarRepository barRepository;
 
-    public BarServiceTests(@Autowired BarService barService) {
-        this.barService = barService;
+    public BarServiceTests(@Autowired BarRepository barRepository) {
+        this.barRepository = barRepository;
+    }
+
+    @Test
+    @DisplayName("""
+        When I try to create two Bar
+        With the same idBar
+        Then it returns a DuplicatedBarException
+    """)
+    void createDuplicatedIdBar() throws Exception {
+
+        String barId = "Mulligan Id";
+        String barName = "Mulligan's";
+        BarRequest barRequest = new BarRequest(barName);
+
+        barRepository.create(barId, barRequest);
+
+        assertThrows(DuplicateBarException.class, () -> 
+            barRepository.create(barId, barRequest)
+        );
     }
 
     //TODO: Complete the test
+    /**
     @Test
     @DisplayName("""
         When I try to create two BarTables
@@ -34,8 +57,9 @@ public class BarServiceTests extends TestCase {
 
         Bar bar = new Bar(new Name("Lo de Ponxe en el Kinto Pino"));
 
-        bar = barService.create(bar);
+        bar = barRepository.create(bar);
 
 
     }
+    **/
 }

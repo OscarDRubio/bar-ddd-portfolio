@@ -1,15 +1,11 @@
 package com.bar.infrastructure.web.controller;
 
-import com.bar.application.BarService;
 import com.bar.domain.bar.Bar;
-import com.bar.domain.bar.BarId;
 import com.bar.domain.exception.DuplicateBarException;
 import com.bar.domain.exception.NullNameException;
 import com.bar.domain.shared.Name;
-import com.bar.domain.table.BarTable;
-import com.bar.infrastructure.web.controller.dto.CreateBarRequest;
-import com.bar.infrastructure.web.controller.dto.CreateBarTableRequest;
-
+import com.bar.infrastructure.repository.bar.BarRepository;
+import com.bar.infrastructure.web.controller.dto.BarRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -30,11 +26,11 @@ import java.util.Optional;
 @RequestMapping("/api/bar")
 public class BarController {
 
-    private final BarService barService;
+    private final BarRepository barRepository;
 
     @Autowired
-    public BarController(BarService barService) {
-        this.barService = barService;
+    public BarController(BarRepository barRepository) {
+        this.barRepository = barRepository;
     }
 
     @Operation(
@@ -50,7 +46,7 @@ public class BarController {
     })
     @GetMapping
     public ResponseEntity<Page<Bar>> getAllBars(Pageable pageable) {
-        Page<Bar> barsPage = barService.findAll(pageable);
+        Page<Bar> barsPage = barRepository.findAll(pageable);
         return ResponseEntity.ok(barsPage);
     }
 
@@ -68,47 +64,50 @@ public class BarController {
     @Cacheable("barListByNameCache")
     @GetMapping("/search")
     public ResponseEntity<Page<Bar>> searchBarByName(@RequestParam String keyword, Pageable pageable) {
-        Page<Bar> barsPage = barService.findByNameContaining(keyword, pageable);
+        Page<Bar> barsPage = barRepository.findByNameContaining(keyword, pageable);
         return ResponseEntity.ok(barsPage);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Bar> getBarById(@PathVariable String id) {
-        Optional<Bar> barOptional = barService.findById(id);
+        Optional<Bar> barOptional = barRepository.findById(id);
         return barOptional.map(bar -> ResponseEntity.ok().body(bar))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Bar> createBar(@RequestBody CreateBarRequest barRequest)
+    public ResponseEntity<Bar> createBar(@RequestBody BarRequest barRequest)
             throws DuplicateBarException, NullNameException {
 
         Bar bar = new Bar(
                 new Name(barRequest.getName()));
-        barService.create(bar);
+        barRepository.create(barRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(bar);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(value = HttpStatus.OK)
-    public void updateBar(@PathVariable String id, @RequestBody CreateBarRequest updateBarRequest) {
+    public void updateBar(@PathVariable String id, @RequestBody BarRequest barRequest) {
 
-        barService.update(new BarId(id), updateBarRequest);
+        barRepository.update(id, barRequest);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteBar(@PathVariable String id) {
-        barService.deleteById(id);
+        barRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
+    //TODO: Create BarTable
+    /**
     @PostMapping("/{id}/createTable")
     public ResponseEntity<BarTable> createBarTable(@PathVariable String id, @RequestBody CreateBarTableRequest request) {
 
-        BarTable barTable = barService.createBarTable(
+        BarTable barTable = barRepository.createBarTable(
             new BarTable(
                 new Name(request.getName()), 
                 new BarId(id)));
         return ResponseEntity.status(HttpStatus.CREATED).body(barTable);
     }
+    **/
 }
