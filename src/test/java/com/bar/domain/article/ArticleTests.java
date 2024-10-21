@@ -27,7 +27,6 @@ import com.bar.domain.shared.Price;
 import com.bar.infrastructure.repository.article.ArticleHistoryRepository;
 import com.bar.infrastructure.repository.article.ArticleRepository;
 import com.bar.infrastructure.repository.bar.BarRepository;
-import com.bar.infrastructure.web.controller.dto.BarRequest;
 
 import jakarta.transaction.Transactional;
 
@@ -231,7 +230,6 @@ public class ArticleTests {
     }
 
     private Bar createBar(String barName) throws DuplicateBarException {
-        BarRequest barRequest = new BarRequest(barName);
-        return barRepository.create(barRequest);
+        return barRepository.create(barName);
     }
 }

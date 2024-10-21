@@ -12,7 +12,6 @@ import java.util.Optional;
 
 @Repository
 public interface JpaBarRepository extends JpaRepository<Bar, BarId> {
-    Optional<Bar> findByName_Name(String name);
     Page<Bar> findByName_NameContaining(String name, Pageable pageable);
     @Override
     @NonNull

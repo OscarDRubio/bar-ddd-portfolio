@@ -3,7 +3,6 @@ package com.bar.infrastructure.web.controller;
 import com.bar.domain.bar.Bar;
 import com.bar.domain.exception.DuplicateBarException;
 import com.bar.domain.exception.NullNameException;
-import com.bar.domain.shared.Name;
 import com.bar.infrastructure.repository.bar.BarRepository;
 import com.bar.infrastructure.web.controller.dto.BarRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -79,17 +78,14 @@ public class BarController {
     public ResponseEntity<Bar> createBar(@RequestBody BarRequest barRequest)
             throws DuplicateBarException, NullNameException {
 
-        Bar bar = new Bar(
-                new Name(barRequest.getName()));
-        barRepository.create(barRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(bar);
+        return ResponseEntity.status(HttpStatus.CREATED).body(barRepository.create(barRequest.getName()));
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     public void updateBar(@PathVariable String id, @RequestBody BarRequest barRequest) {
 
-        barRepository.update(id, barRequest);
+        barRepository.update(id, barRequest.getName());
     }
 
     @DeleteMapping("/{id}")

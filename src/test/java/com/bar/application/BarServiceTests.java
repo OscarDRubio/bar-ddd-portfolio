@@ -10,7 +10,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 import com.bar.domain.exception.DuplicateBarException;
 import com.bar.infrastructure.repository.bar.BarRepository;
-import com.bar.infrastructure.web.controller.dto.BarRequest;
 
 import jakarta.transaction.Transactional;
 import junit.framework.TestCase;
@@ -36,12 +35,11 @@ public class BarServiceTests extends TestCase {
 
         String barId = "Mulligan Id";
         String barName = "Mulligan's";
-        BarRequest barRequest = new BarRequest(barName);
 
-        barRepository.create(barId, barRequest);
+        barRepository.create(barId, barName);
 
         assertThrows(DuplicateBarException.class, () -> 
-            barRepository.create(barId, barRequest)
+            barRepository.create(barId, barName)
         );
     }
 

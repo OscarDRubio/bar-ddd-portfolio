@@ -7,10 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.bar.domain.bar.Bar;
-import com.bar.domain.bar.BarId;
 import com.bar.domain.exception.DuplicateBarException;
-import com.bar.domain.shared.Name;
 import com.bar.infrastructure.repository.bar.BarRepository;
 
 //TODO: Remove SpringBootTest full load
@@ -31,16 +28,15 @@ public class BarRepositoryTests {
     """)
     void duplicateId() {
 
-        BarId barId = new BarId("BarId");
+        String barId = "Duplicated Bar Id";
+        String name1 = "Bar One";
 
-        Bar bar = new Bar(barId, new Name("BarTest1"));
+        barRepository.create(barId, name1);
 
-        barRepository.save(bar);
-        
-        Bar duplicatedBar = new Bar(barId, new Name("BarTest2"));
+        String name2 = "Bar Two";
 
         assertThrows(DuplicateBarException.class, () -> 
-            barRepository.save(duplicatedBar)
+            barRepository.create(barId, name2)
         );
     }
 
@@ -51,14 +47,12 @@ public class BarRepositoryTests {
     """)
     void duplicateName() {
 
-        Bar bar = new Bar(new Name("BarTest"));
+        String name = "Mariano's";
 
-        barRepository.save(bar);
-        
-        Bar duplicatedBar = new Bar(new Name("BarTest"));
+        barRepository.create(name);
 
         assertThrows(DuplicateBarException.class, () -> 
-            barRepository.save(duplicatedBar)
+            barRepository.create(name)
         );
     }
 }

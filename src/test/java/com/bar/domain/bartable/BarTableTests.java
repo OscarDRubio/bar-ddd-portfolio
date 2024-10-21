@@ -19,7 +19,6 @@ import com.bar.domain.exception.NullNameException;
 import com.bar.domain.shared.Name;
 import com.bar.domain.table.BarTable;
 import com.bar.infrastructure.repository.bar.BarRepository;
-import com.bar.infrastructure.web.controller.dto.BarRequest;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -121,8 +120,7 @@ public class BarTableTests {
     }
 
     private Bar createBar(String barName) throws DuplicateBarException {
-        BarRequest request = new BarRequest(barName);
-        return barRepository.create(request);
+        return barRepository.create(barName);
     }
 
 }
