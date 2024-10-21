@@ -31,17 +31,24 @@ public class BarRepository implements IBarRepository {
         return create(null, name);
     }
 
-    public Bar create(String barId, String name) {
+    public Bar create(String barIdString, String name) {
 
-        if(barId != null) {
-            findById(barId)
+        if(barIdString != null) {
+            findById(barIdString)
                 .ifPresent(bar -> {
                     throw new DuplicateBarException();
                 });
         }
 
+        findByName(name)
+                .ifPresent(bar -> {
+                    throw new DuplicateBarException();
+                });
+        
+        BarId barId = barIdString == null ? new BarId() : new BarId(barIdString);
+
         Bar bar = new Bar(
-            new BarId(barId), 
+            barId, 
             new Name(name));
 
         jpaBarRepository.save(bar);
@@ -76,5 +83,10 @@ public class BarRepository implements IBarRepository {
     @Override
     public Optional<Bar> findById(String id) {
         return jpaBarRepository.findById(id);
+    }
+
+    @Override
+    public Optional<Bar> findByName(String name) {
+        return jpaBarRepository.findByName_Name(name);
     }
 }

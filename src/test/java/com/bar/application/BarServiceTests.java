@@ -43,6 +43,23 @@ public class BarServiceTests extends TestCase {
         );
     }
 
+    @Test
+    @DisplayName("""
+        When I try to create two Bar
+        With the same Name
+        Then it returns a DuplicatedBarException
+    """)
+    void createDuplicatedName() throws Exception {
+
+        String barName = "Mulligan's";
+
+        barRepository.create(barName);
+
+        assertThrows(DuplicateBarException.class, () -> 
+            barRepository.create(barName)
+        );
+    }
+
     //TODO: Complete the test
     /**
     @Test

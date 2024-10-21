@@ -7,9 +7,10 @@ import org.springframework.data.domain.Pageable;
 
 public interface IBarRepository {
     Optional<Bar> findById(String id);
-    Page<Bar> findByNameContaining(String keyword, Pageable pageable);
+    Optional<Bar> findByName(String name);
     void deleteById(String id);
-    Page<Bar> findAll(Pageable pageable);
     Bar create(String name);
     Bar update(String id, String name);
+    Page<Bar> findByNameContaining(String keyword, Pageable pageable);
+    Page<Bar> findAll(Pageable pageable);
 }
