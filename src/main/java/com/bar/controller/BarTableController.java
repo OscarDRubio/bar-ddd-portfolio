@@ -1,4 +1,4 @@
-package com.bar.infrastructure.web.controller;
+package com.bar.controller;
 
 import java.util.List;
 

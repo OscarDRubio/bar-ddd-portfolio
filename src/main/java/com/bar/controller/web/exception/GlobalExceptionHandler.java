@@ -1,4 +1,4 @@
-package com.bar.infrastructure.web.exception;
+package com.bar.controller.web.exception;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;

@@ -1,13 +1,14 @@
-package com.bar.infrastructure.web.controller;
+package com.bar.controller;
 
 import com.bar.application.bar.BarService;
 import com.bar.application.bar.command.CreateBarCommand;
 import com.bar.application.bar.command.UpdateBarCommand;
+import com.bar.controller.dto.BarRequest;
 import com.bar.domain.bar.Bar;
 import com.bar.domain.bar.BarDto;
 import com.bar.domain.exception.DuplicateBarException;
 import com.bar.domain.exception.NullNameException;
-import com.bar.infrastructure.web.controller.dto.BarRequest;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

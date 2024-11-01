@@ -1,4 +1,4 @@
-package com.bar.infrastructure.web.aspect;
+package com.bar.controller.web.aspect;
 
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;

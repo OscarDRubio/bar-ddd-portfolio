@@ -1,11 +1,11 @@
 package com.bar.infrastructure.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.bar.controller.dto.CreateBarTableRequest;
 import com.bar.domain.bar.Bar;
 import com.bar.domain.bar.BarId;
 import com.bar.domain.exception.EmptyNameException;
 import com.bar.domain.exception.NullNameException;
-import com.bar.infrastructure.web.controller.dto.CreateBarTableRequest;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;

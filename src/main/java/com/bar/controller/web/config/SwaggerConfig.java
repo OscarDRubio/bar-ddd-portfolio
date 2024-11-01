@@ -1,4 +1,4 @@
-package com.bar.infrastructure.web.config;
+package com.bar.controller.web.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

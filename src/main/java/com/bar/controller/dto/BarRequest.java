@@ -1,4 +1,4 @@
-package com.bar.infrastructure.web.controller.dto;
+package com.bar.controller.dto;
 
 public class BarRequest {
 
