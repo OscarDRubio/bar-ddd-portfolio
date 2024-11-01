@@ -8,11 +8,10 @@ import com.bar.domain.shared.Pagination;
 
 public interface IBarRepository {
 
-    Optional<Bar> findById(BarId id);
+    Bar findById(BarId id);
     List<Bar> findAllPaginated(Pagination pagination);
     List<Bar> findByNameContaining(Name name);
     Optional<Bar> findByName(Name name);
-    boolean existsByNameAndDifferentId(Name name, BarId id);
-    Bar save(Bar bar);
+    void save(Bar bar);
     void deleteById(BarId id);
 }

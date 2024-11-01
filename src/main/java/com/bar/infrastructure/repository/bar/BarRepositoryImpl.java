@@ -7,6 +7,9 @@ import com.bar.domain.bar.Bar;
 import com.bar.domain.bar.BarId;
 import com.bar.domain.shared.Name;
 import com.bar.domain.shared.Pagination;
+
+import jakarta.persistence.EntityNotFoundException;
+
 import com.bar.domain.bar.IBarRepository;
 
 import java.util.List;
@@ -23,8 +26,11 @@ public class BarRepositoryImpl implements IBarRepository {
     }
 
     @Override
-    public Optional<Bar> findById(BarId id) {
-        return jpaBarRepository.findById(id);
+    public Bar findById(BarId id) {
+        Optional<Bar> barOptional = jpaBarRepository.findById(id);
+        if(!barOptional.isPresent()) 
+            throw new EntityNotFoundException("The barId does not exist.");
+        return barOptional.get();
     }
 
     @Override
@@ -44,8 +50,8 @@ public class BarRepositoryImpl implements IBarRepository {
     }
 
     @Override
-    public Bar save(Bar bar) {
-        return jpaBarRepository.save(bar);
+    public void save(Bar bar) {
+        jpaBarRepository.save(bar);
     }
 
     @Override
@@ -53,8 +59,7 @@ public class BarRepositoryImpl implements IBarRepository {
         jpaBarRepository.deleteById(id);
     }
 
-    @Override
-    public boolean existsByNameAndDifferentId(Name name, BarId id) {
+    private boolean existsByNameAndDifferentId(Name name, BarId id) {
         return jpaBarRepository.existsByNameAndIdNot(name.getName(), id.getId());
     }
 

@@ -4,6 +4,9 @@ import com.bar.application.bar.BarService;
 import com.bar.application.bar.dto.BarRequest;
 import com.bar.domain.bar.Bar;
 import com.bar.domain.bar.BarDto;
+import com.bar.domain.bar.BarId;
+import com.bar.domain.bar.IBarRepository;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -26,10 +29,12 @@ import java.util.Optional;
 public class BarController {
 
     private final BarService barService;
+    private final IBarRepository barRepository;
 
     @Autowired
-    public BarController(BarService barService) {
+    public BarController(BarService barService, IBarRepository barRepository) {
         this.barService = barService;
+        this.barRepository = barRepository;
     }
 
     @Operation(
@@ -67,12 +72,15 @@ public class BarController {
         return ResponseEntity.ok(barsPage);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Bar> getBarById(@PathVariable String id) {
-        Optional<Bar> barOptional = barService.findById(id);
-        return barOptional.map(bar -> ResponseEntity.ok().body(bar))
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
+    // @GetMapping("/{id}")
+    // public ResponseEntity<Bar> getBarById(@PathVariable String id) {
+
+    //TODO: Add Domain to HTTP error mapping
+
+    //     Bar bar = barRepository.findById(new BarId(id));
+    //     return bar.map(bar -> ResponseEntity.ok().body(bar))
+    //             .orElseGet(() -> ResponseEntity.notFound().build());
+    // }
 
     @PostMapping
     public ResponseEntity<BarDto> createBar(@RequestBody BarRequest barRequest) {

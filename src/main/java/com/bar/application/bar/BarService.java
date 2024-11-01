@@ -30,11 +30,6 @@ public class BarService {
         return barRepository.findAllPaginated(pagination);
     }
 
-
-    public Optional<Bar> findById(String barIdString) {
-        return barRepository.findById(new BarId(barIdString));
-    }
-
     public BarDto createBar(BarRequest request) {
 
         if (barRepository.findByName(new Name(request.name)).isPresent()) {
@@ -42,26 +37,24 @@ public class BarService {
         }
 
         Bar bar = new Bar(new Name(request.name));
-        Bar savedBar = barRepository.save(bar);
-        return savedBar.toDto();
+        barRepository.save(bar);
+        return bar.toDto();
     }
 
     public BarDto updateBar(String id, BarRequest request) {
 
-        Optional<Bar> barOptional = findById(id);
+        barRepository.findById(new BarId(id));
 
-        if(!barOptional.isPresent()) 
-            throw new EntityNotFoundException("The BarId does not exist.");
+        //TODO: Move to repo layer
+        // if (barRepository.existsByNameAndDifferentId(
+        //     new Name(request.name), new BarId(id))) {
 
-        if(barRepository.existsByNameAndDifferentId(
-            new Name(request.name), new BarId(id))) {
-
-            throw new DuplicateBarException();
-        }
+        //     throw new DuplicateBarException();
+        // }
 
         Bar bar = new Bar(new BarId(id), new Name(request.name));
-        Bar updatedBar = barRepository.save(bar);
-        return updatedBar.toDto();
+        barRepository.save(bar);
+        return bar.toDto();
     }
 
     public List<Bar> findByNameContaining(String name) {

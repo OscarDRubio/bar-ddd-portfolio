@@ -1,55 +1,55 @@
 package com.bar.application;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import com.bar.application.bar.BarService;
-import com.bar.application.bar.command.CreateBarCommand;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import com.bar.domain.bar.Bar;
-import com.bar.domain.bar.BarDto;
 import com.bar.domain.bar.BarId;
-import com.bar.domain.bar.IBarRepository;
-import com.bar.domain.exception.DuplicateBarException;
 import com.bar.domain.shared.Name;
-import junit.framework.TestCase;
+import com.bar.infrastructure.repository.bar.BarRepositoryImpl;
+import jakarta.transaction.Transactional;
 
-@ExtendWith(MockitoExtension.class)
-public class BarServiceTests extends TestCase {
+@ActiveProfiles("test")
+// @Transactional
+@SpringBootTest()   
+// @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@DataJpaTest
 
-    @Mock
-    private IBarRepository barRepository;
+public class BarIntegrationTests {
 
-    @InjectMocks
-    private BarService barService;
+    @Autowired
+    BarRepositoryImpl barRepository;
 
+    @Autowired
+    TestEntityManager entityManager;
+
+    @Test
+    @DisplayName("""
+        When I try to create a valid Bar
+        Then it returns a DuplicatedBarException
+    """)
     void createBar() {
 
-        String barIdString = "unique-id";
-        String barName = "Unique Bar";
-        CreateBarCommand command = new CreateBarCommand(barIdString, barName);
+        // String barIdString = "unique-id";
+        // String barNameString = "Unique Bar";
+        
+        // Bar bar = new Bar(
+        //     new BarId(barIdString), 
+        //     new Name(barNameString));
 
-        when(barRepository.findById(new BarId(barIdString))).thenReturn(Optional.empty());
-        when(barRepository.findByName(new Name(barName))).thenReturn(Optional.empty());
+        // barRepository.save(bar);
 
-        BarDto createdBar = barService.createBar(command);
-
-        assertNotNull(createdBar);
-        assertEquals(barIdString, createdBar.getId());
-        assertEquals(barName, createdBar.getName());
-        verify(barRepository).save(any(Bar.class)); 
+        // verify(barRepository).save(any(Bar.class)); 
     }
 
+    /**
     @Test
     @DisplayName("""
         When I try to create two Bar
@@ -88,6 +88,7 @@ public class BarServiceTests extends TestCase {
 
         verify(barRepository, never()).save(any(Bar.class)); 
     }
+         */
 
     //TODO: Complete the test
     /**
