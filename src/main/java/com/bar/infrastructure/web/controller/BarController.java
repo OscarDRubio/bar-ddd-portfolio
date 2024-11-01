@@ -1,9 +1,12 @@
 package com.bar.infrastructure.web.controller;
 
+import com.bar.application.bar.BarService;
+import com.bar.application.bar.command.CreateBarCommand;
+import com.bar.application.bar.command.UpdateBarCommand;
 import com.bar.domain.bar.Bar;
+import com.bar.domain.bar.BarDto;
 import com.bar.domain.exception.DuplicateBarException;
 import com.bar.domain.exception.NullNameException;
-import com.bar.infrastructure.repository.bar.BarRepository;
 import com.bar.infrastructure.web.controller.dto.BarRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @Tag(name = "Bar", description = "Bar management API")
@@ -25,11 +29,11 @@ import java.util.Optional;
 @RequestMapping("/api/bar")
 public class BarController {
 
-    private final BarRepository barRepository;
+    private final BarService barService;
 
     @Autowired
-    public BarController(BarRepository barRepository) {
-        this.barRepository = barRepository;
+    public BarController(BarService barService) {
+        this.barService = barService;
     }
 
     @Operation(
@@ -44,8 +48,8 @@ public class BarController {
                     mediaType = "application/json")
     })
     @GetMapping
-    public ResponseEntity<Page<Bar>> getAllBars(Pageable pageable) {
-        Page<Bar> barsPage = barRepository.findAll(pageable);
+    public ResponseEntity<List<Bar>> getAllBars(Pageable pageable) {
+        List<Bar> barsPage = barService.findAllPaginated(pageable.getPageNumber(), pageable.getPageSize());
         return ResponseEntity.ok(barsPage);
     }
 
@@ -62,35 +66,42 @@ public class BarController {
     })
     @Cacheable("barListByNameCache")
     @GetMapping("/search")
-    public ResponseEntity<Page<Bar>> searchBarByName(@RequestParam String keyword, Pageable pageable) {
-        Page<Bar> barsPage = barRepository.findByNameContaining(keyword, pageable);
+    public ResponseEntity<List<Bar>> searchBarByName(@RequestParam String keyword) {
+        List<Bar> barsPage = barService.findByNameContaining(keyword);
         return ResponseEntity.ok(barsPage);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Bar> getBarById(@PathVariable String id) {
-        Optional<Bar> barOptional = barRepository.findById(id);
+        Optional<Bar> barOptional = barService.findById(id);
         return barOptional.map(bar -> ResponseEntity.ok().body(bar))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Bar> createBar(@RequestBody BarRequest barRequest)
+    public ResponseEntity<BarDto> createBar(@RequestBody BarRequest barRequest)
             throws DuplicateBarException, NullNameException {
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(barRepository.create(barRequest.getName()));
+        CreateBarCommand command = new CreateBarCommand(barRequest.getName());
+
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(barService.createBar(
+                command));
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     public void updateBar(@PathVariable String id, @RequestBody BarRequest barRequest) {
 
-        barRepository.update(id, barRequest.getName());
+        UpdateBarCommand command = new UpdateBarCommand(id, barRequest.getName());
+
+        barService.updateBar(command);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteBar(@PathVariable String id) {
-        barRepository.deleteById(id);
+        barService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -99,7 +110,7 @@ public class BarController {
     @PostMapping("/{id}/createTable")
     public ResponseEntity<BarTable> createBarTable(@PathVariable String id, @RequestBody CreateBarTableRequest request) {
 
-        BarTable barTable = barRepository.createBarTable(
+        BarTable barTable = barService.createBarTable(
             new BarTable(
                 new Name(request.getName()), 
                 new BarId(id)));

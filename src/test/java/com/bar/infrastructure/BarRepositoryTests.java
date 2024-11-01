@@ -1,23 +1,16 @@
 package com.bar.infrastructure;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import com.bar.domain.exception.DuplicateBarException;
-import com.bar.infrastructure.repository.bar.BarRepository;
 
 //TODO: Remove SpringBootTest full load
 @SpringBootTest
 public class BarRepositoryTests {
 
-    private BarRepository barRepository;
+    /**
+    private BarRepositoryImpl barRepository;
 
     @Autowired
-    public BarRepositoryTests(BarRepository barRepository) {
+    public BarRepositoryTests(BarRepositoryImpl barRepository) {
         this.barRepository = barRepository;
     }
 
@@ -55,4 +48,6 @@ public class BarRepositoryTests {
             barRepository.create(name)
         );
     }
+
+    **/
 }

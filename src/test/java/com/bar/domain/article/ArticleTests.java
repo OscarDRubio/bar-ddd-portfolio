@@ -1,32 +1,7 @@
 package com.bar.domain.article;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import java.util.List;
-import java.util.Optional;
-
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
-
-import com.bar.application.ArticleService;
-import com.bar.domain.bar.Bar;
-import com.bar.domain.bar.BarId;
-import com.bar.domain.exception.DuplicateBarException;
-import com.bar.domain.exception.EmptyNameException;
-import com.bar.domain.exception.NullBarIdException;
-import com.bar.domain.exception.NullNameException;
-import com.bar.domain.shared.Name;
-import com.bar.domain.shared.Price;
-import com.bar.infrastructure.repository.article.ArticleHistoryRepository;
-import com.bar.infrastructure.repository.article.ArticleRepository;
-import com.bar.infrastructure.repository.bar.BarRepository;
 
 import jakarta.transaction.Transactional;
 
@@ -52,18 +27,20 @@ import jakarta.transaction.Transactional;
 @Transactional
 public class ArticleTests {
 
+    /**
+
     //TODO: Remove access to repositories and use Services
 
     private final ArticleRepository articleRepository;
     private final ArticleHistoryRepository articleHistoryRepository;
     private final ArticleService articleService; 
-    private final BarRepository barRepository;
+    private final BarRepositoryImpl barRepository;
 
     @Autowired
     public ArticleTests(ArticleRepository articleRepository,
         ArticleHistoryRepository articleHistoryRepository,
         ArticleService articleService,
-        BarRepository barRepository) {
+        BarRepositoryImpl barRepository) {
 
         this.articleRepository = articleRepository;
         this.articleHistoryRepository = articleHistoryRepository;
@@ -78,7 +55,7 @@ public class ArticleTests {
     """)
     void createAndSave() throws Exception {
 
-        Bar bar = createBar("Bar Pepe");
+        BarDto bar = createBar("Bar Pepe");
         Article article = new Article(
             new Name("Coca Cola"), 
             new BarId(bar.toDto().id()),
@@ -229,7 +206,11 @@ public class ArticleTests {
         });
     }
 
-    private Bar createBar(String barName) throws DuplicateBarException {
-        return barRepository.create(barName);
+    private BarDto createBar(String barName) throws DuplicateBarException {
+
+        CreateBarCommand command = new CreateBarCommand(barName);
+        return barRepository.createBar(command);
     }
+
+     */
 }

@@ -1,28 +1,53 @@
 package com.bar.application;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import com.bar.application.bar.BarService;
+import com.bar.application.bar.command.CreateBarCommand;
+import com.bar.domain.bar.Bar;
+import com.bar.domain.bar.BarDto;
+import com.bar.domain.bar.BarId;
+import com.bar.domain.bar.IBarRepository;
 import com.bar.domain.exception.DuplicateBarException;
-import com.bar.infrastructure.repository.bar.BarRepository;
-
-import jakarta.transaction.Transactional;
+import com.bar.domain.shared.Name;
 import junit.framework.TestCase;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@Transactional
+@ExtendWith(MockitoExtension.class)
 public class BarServiceTests extends TestCase {
 
-    private final BarRepository barRepository;
+    @Mock
+    private IBarRepository barRepository;
 
-    public BarServiceTests(@Autowired BarRepository barRepository) {
-        this.barRepository = barRepository;
+    @InjectMocks
+    private BarService barService;
+
+    void createBar() {
+
+        String barIdString = "unique-id";
+        String barName = "Unique Bar";
+        CreateBarCommand command = new CreateBarCommand(barIdString, barName);
+
+        when(barRepository.findById(new BarId(barIdString))).thenReturn(Optional.empty());
+        when(barRepository.findByName(new Name(barName))).thenReturn(Optional.empty());
+
+        BarDto createdBar = barService.createBar(command);
+
+        assertNotNull(createdBar);
+        assertEquals(barIdString, createdBar.getId());
+        assertEquals(barName, createdBar.getName());
+        verify(barRepository).save(any(Bar.class)); 
     }
 
     @Test
@@ -31,16 +56,18 @@ public class BarServiceTests extends TestCase {
         With the same idBar
         Then it returns a DuplicatedBarException
     """)
-    void createDuplicatedIdBar() throws Exception {
+    void createDuplicatedIdBar() {
 
-        String barId = "Mulligan Id";
-        String barName = "Mulligan's";
+        String barIdString = "existing-id";
+        String barName = "Another Bar";
+        CreateBarCommand command = new CreateBarCommand(barIdString, barName);
 
-        barRepository.create(barId, barName);
+        Bar existingBar = new Bar(new BarId(barIdString), new Name("Existing Bar"));
+        when(barRepository.findById(new BarId(barIdString))).thenReturn(Optional.of(existingBar));
 
-        assertThrows(DuplicateBarException.class, () -> 
-            barRepository.create(barId, barName)
-        );
+        assertThrows(DuplicateBarException.class, () -> barService.createBar(command));
+
+        verify(barRepository, never()).save(any(Bar.class)); 
     }
 
     @Test
@@ -49,15 +76,17 @@ public class BarServiceTests extends TestCase {
         With the same Name
         Then it returns a DuplicatedBarException
     """)
-    void createDuplicatedName() throws Exception {
+    void createDuplicatedName() {
 
         String barName = "Mulligan's";
+        CreateBarCommand command = new CreateBarCommand(barName);
 
-        barRepository.create(barName);
+        Bar existingBar = new Bar(new BarId("123"), new Name(barName));
+        when(barRepository.findByName(new Name(barName))).thenReturn(Optional.of(existingBar));
 
-        assertThrows(DuplicateBarException.class, () -> 
-            barRepository.create(barName)
-        );
+        assertThrows(DuplicateBarException.class, () -> barService.createBar(command));
+
+        verify(barRepository, never()).save(any(Bar.class)); 
     }
 
     //TODO: Complete the test
@@ -72,7 +101,7 @@ public class BarServiceTests extends TestCase {
 
         Bar bar = new Bar(new Name("Lo de Ponxe en el Kinto Pino"));
 
-        bar = barRepository.create(bar);
+        bar = barService.create(bar);
 
 
     }

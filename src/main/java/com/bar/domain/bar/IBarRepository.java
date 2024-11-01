@@ -1,16 +1,18 @@
 package com.bar.domain.bar;
 
+import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.bar.domain.shared.Name;
+import com.bar.domain.shared.Pagination;
 
 public interface IBarRepository {
-    Optional<Bar> findById(String id);
-    Optional<Bar> findByName(String name);
-    void deleteById(String id);
-    Bar create(String name);
-    Bar update(String id, String name);
-    Page<Bar> findByNameContaining(String keyword, Pageable pageable);
-    Page<Bar> findAll(Pageable pageable);
+
+    Optional<Bar> findById(BarId id);
+    List<Bar> findAllPaginated(Pagination pagination);
+    List<Bar> findByNameContaining(Name name);
+    Optional<Bar> findByName(Name name);
+    boolean existsByNameAndDifferentId(Name name, BarId id);
+    Bar save(Bar bar);
+    void deleteById(BarId id);
 }
