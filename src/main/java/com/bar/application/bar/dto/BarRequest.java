@@ -1,17 +1,13 @@
-package com.bar.controller.dto;
+package com.bar.application.bar.dto;
 
 public class BarRequest {
 
-    private String name;
+    public String name;
 
     public BarRequest() {
     }
 
     public BarRequest(String name) {
         this.name = name;
-    }
-
-    public String getName() {
-        return name;
     }
 }

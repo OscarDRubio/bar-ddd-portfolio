@@ -1,14 +1,9 @@
 package com.bar.controller;
 
 import com.bar.application.bar.BarService;
-import com.bar.application.bar.command.CreateBarCommand;
-import com.bar.application.bar.command.UpdateBarCommand;
-import com.bar.controller.dto.BarRequest;
+import com.bar.application.bar.dto.BarRequest;
 import com.bar.domain.bar.Bar;
 import com.bar.domain.bar.BarDto;
-import com.bar.domain.exception.DuplicateBarException;
-import com.bar.domain.exception.NullNameException;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -80,24 +75,20 @@ public class BarController {
     }
 
     @PostMapping
-    public ResponseEntity<BarDto> createBar(@RequestBody BarRequest barRequest)
-            throws DuplicateBarException, NullNameException {
+    public ResponseEntity<BarDto> createBar(@RequestBody BarRequest barRequest) {
 
-        CreateBarCommand command = new CreateBarCommand(barRequest.getName());
+        BarDto result = barService.createBar(barRequest);
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(barService.createBar(
-                command));
+            .body(result);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(value = HttpStatus.OK)
-    public void updateBar(@PathVariable String id, @RequestBody BarRequest barRequest) {
+    public void updateBar(@RequestParam @PathVariable String id, @RequestBody BarRequest barRequest) {
 
-        UpdateBarCommand command = new UpdateBarCommand(id, barRequest.getName());
-
-        barService.updateBar(command);
+        barService.updateBar(id, barRequest);
     }
 
     @DeleteMapping("/{id}")

@@ -5,8 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.bar.application.bar.command.CreateBarCommand;
-import com.bar.application.bar.command.UpdateBarCommand;
+import com.bar.application.bar.dto.BarRequest;
 import com.bar.domain.bar.Bar;
 import com.bar.domain.bar.BarDto;
 import com.bar.domain.bar.BarId;
@@ -33,36 +32,34 @@ public class BarService {
 
 
     public Optional<Bar> findById(String barIdString) {
-
-        BarId barId = new BarId(barIdString);
-        return barRepository.findById(barId);
+        return barRepository.findById(new BarId(barIdString));
     }
 
-    public BarDto createBar(CreateBarCommand command) {
+    public BarDto createBar(BarRequest request) {
 
-        if (barRepository.findByName(new Name(command.getName())).isPresent()) {
+        if (barRepository.findByName(new Name(request.name)).isPresent()) {
             throw new DuplicateBarException();
         }
 
-        Bar bar = new Bar(new Name(command.getName()));
+        Bar bar = new Bar(new Name(request.name));
         Bar savedBar = barRepository.save(bar);
         return savedBar.toDto();
     }
 
-    public BarDto updateBar(UpdateBarCommand command) {
+    public BarDto updateBar(String id, BarRequest request) {
 
-        Optional<Bar> barOptional = findById(command.getId());
+        Optional<Bar> barOptional = findById(id);
 
         if(!barOptional.isPresent()) 
             throw new EntityNotFoundException("The BarId does not exist.");
 
         if(barRepository.existsByNameAndDifferentId(
-            new Name(command.getName()), new BarId(command.getId()))) {
+            new Name(request.name), new BarId(id))) {
 
             throw new DuplicateBarException();
         }
 
-        Bar bar = new Bar(new BarId(command.getId()), new Name(command.getName()));
+        Bar bar = new Bar(new BarId(id), new Name(request.name));
         Bar updatedBar = barRepository.save(bar);
         return updatedBar.toDto();
     }
